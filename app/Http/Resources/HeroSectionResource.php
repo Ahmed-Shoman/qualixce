@@ -11,9 +11,19 @@ class HeroSectionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'subtitle' => $this->subtitle,
             'background_image' => $this->background_image ? asset('storage/' . $this->background_image) : null,
+            'translations' => [
+                'ar' => [
+                    'title' => $this->getTranslation('title', 'ar'),
+                    'subtitle' => $this->getTranslation('subtitle', 'ar'),
+                    'background_image_alt' => $this->getTranslation('background_image_alt', 'ar'),
+                ],
+                'en' => [
+                    'title' => $this->getTranslation('title', 'en'),
+                    'subtitle' => $this->getTranslation('subtitle', 'en'),
+                    'background_image_alt' => $this->getTranslation('background_image_alt', 'en'),
+                ],
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

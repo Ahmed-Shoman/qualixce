@@ -35,6 +35,10 @@ class HeroSectionResource extends Resource
                 FileUpload::make('background_image')
                     ->label(__('actions.hero_section_background_image'))
                     ->image(),
+
+                TextInput::make('background_image_alt')
+                    ->label(__('actions.hero_section_background_image_alt'))
+                    ->required(),
             ]);
     }
 
@@ -45,6 +49,7 @@ class HeroSectionResource extends Resource
                 TextColumn::make('title')->label(__('actions.hero_section_title')),
                 TextColumn::make('subtitle')->label(__('actions.hero_section_subtitle')),
                 ImageColumn::make('background_image')->label(__('actions.hero_section_background_image')),
+                TextColumn::make('background_image_alt')->label(__('actions.hero_section_background_image_alt')),
             ]);
     }
 

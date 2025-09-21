@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('title');
             $table->string('subtitle')->nullable();
             $table->string('background_image')->nullable();
+            $table->string('background_image_alt')->nullable(); // ← حقل ALT
             $table->timestamps();
         });
     }

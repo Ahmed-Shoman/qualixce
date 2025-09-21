@@ -20,6 +20,7 @@ class HeroSectionController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'background_image' => 'nullable|image',
+            'background_image_alt' => 'required|string|max:255',
         ]);
 
         if ($request->hasFile('background_image')) {
@@ -42,6 +43,7 @@ class HeroSectionController extends Controller
             'title' => 'sometimes|required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'background_image' => 'nullable|image',
+            'background_image_alt' => 'sometimes|required|string|max:255',
         ]);
 
         if ($request->hasFile('background_image')) {
