@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HeroSectionController;
 use App\Http\Controllers\Api\AboutQualixceSectionController;
+use App\Http\Controllers\Api\FounderMessageController;   // ✅ الصح 
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -45,3 +48,28 @@ Route::prefix('our-values')->group(function () {
     Route::patch('{ourValueSection}', [OurValueSectionController::class, 'update']); // PATCH section
     Route::delete('{ourValueSection}', [OurValueSectionController::class, 'destroy']); // DELETE section
 });
+
+use App\Http\Controllers\Api\WhyChooseUsController;
+
+Route::apiResource('why-choose-us', WhyChooseUsController::class);
+
+use App\Http\Controllers\Api\OurServiceController;
+
+Route::apiResource('our-services', OurServiceController::class);
+
+use App\Http\Controllers\Api\ProvenProcessController;
+
+Route::apiResource('proven-processes', ProvenProcessController::class);
+
+use App\Http\Controllers\Api\ExcellenceAreaController;
+
+Route::apiResource('excellence-areas', ExcellenceAreaController::class);
+
+use App\Http\Controllers\Api\GetYourConsultationController;
+
+Route::apiResource('get-your-consultations', GetYourConsultationController::class)
+    ->only(['index', 'store', 'show', 'destroy']);
+
+    use App\Http\Controllers\Api\FoundationMessageController;
+
+Route::apiResource('founder-messages', FounderMessageController::class);

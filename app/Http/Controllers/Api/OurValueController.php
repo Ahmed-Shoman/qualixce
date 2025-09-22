@@ -7,6 +7,7 @@ use App\Http\Resources\OurValueResource as OurValueApiResource;
 use App\Models\OurValueSection;
 use Illuminate\Http\Request;
 
+
 class OurValueSectionController extends Controller
 {
     // GET /api/our-values
