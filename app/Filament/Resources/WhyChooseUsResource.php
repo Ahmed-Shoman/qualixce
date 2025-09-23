@@ -6,13 +6,11 @@ use App\Filament\Resources\WhyChooseUsResource\Pages;
 use App\Models\WhyChooseUs;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Card;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 
 class WhyChooseUsResource extends Resource
 {
@@ -24,8 +22,13 @@ class WhyChooseUsResource extends Resource
     {
         return $form->schema([
             Card::make([
-                TextInput::make('title')->label('Title')->required(),
-                TextInput::make('subtitle')->label('Subtitle')->required(),
+                TextInput::make('title')
+                    ->label('Title')
+                    ->required(),
+
+                TextInput::make('subtitle')
+                    ->label('Subtitle')
+                    ->required(),
 
                 Repeater::make('cards')
                     ->label('Cards')
@@ -34,27 +37,32 @@ class WhyChooseUsResource extends Resource
                         TextInput::make('icon')->label('Icon'),
                         TextInput::make('title')->label('Card Title')->required(),
                         TextInput::make('subtitle')->label('Card Subtitle')->required(),
-                    ])
+                    ]),
             ])->columnSpanFull(),
         ]);
     }
 
     public static function table(Table $table): Table
-{
-    return $table->columns([
-        TextColumn::make('title')->label('Title')->limit(50),
-        TextColumn::make('subtitle')->label('Subtitle')->limit(50),
+    {
+        return $table->columns([
+            TextColumn::make('title')
+                ->label('Title')
+                ->limit(50),
 
-        // For cards
-        TextColumn::make('cards')
-            ->label('Cards')
-            ->formatStateUsing(function ($state) {
-                if (!is_array($state)) return 0;
-                return count($state) . ' Cards';
-            }),
-    ]);
-}
+            TextColumn::make('subtitle')
+                ->label('Subtitle')
+                ->limit(50),
 
+            TextColumn::make('cards')
+                ->label('Cards')
+                ->formatStateUsing(function ($state) {
+                    if (!is_array($state)) {
+                        return 0;
+                    }
+                    return count($state) . ' Cards';
+                }),
+        ]);
+    }
 
     public static function getPages(): array
     {

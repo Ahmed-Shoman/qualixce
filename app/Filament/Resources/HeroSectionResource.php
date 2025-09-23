@@ -21,7 +21,6 @@ class HeroSectionResource extends Resource
     protected static ?string $model = HeroSection::class;
     protected static ?string $navigationIcon = 'heroicon-o-star';
     protected static ?string $navigationLabel = 'Hero Section';
-    protected static ?string $navigationGroup = 'Website Content';
 
     public static function form(Form $form): Form
     {
@@ -29,12 +28,12 @@ class HeroSectionResource extends Resource
             Card::make()
                 ->schema([
                     TextInput::make('title')
-                        ->label(__('actions.hero_section_title'))
+                        ->label('Title')
                         ->required()
                         ->maxLength(255),
 
                     TextInput::make('subtitle')
-                        ->label(__('actions.hero_section_subtitle'))
+                        ->label('Subtitle')
                         ->maxLength(255),
                 ])
                 ->columns([
@@ -46,7 +45,7 @@ class HeroSectionResource extends Resource
             Card::make()
                 ->schema([
                     FileUpload::make('background_image')
-                        ->label(__('actions.hero_section_background_image'))
+                        ->label('Background Image')
                         ->image()
                         ->directory('hero-sections')
                         ->required()
@@ -54,7 +53,7 @@ class HeroSectionResource extends Resource
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
 
                     TextInput::make('background_image_alt')
-                        ->label(__('actions.hero_section_background_image_alt'))
+                        ->label('Background Image Alt')
                         ->required()
                         ->maxLength(255),
                 ])
@@ -71,25 +70,25 @@ class HeroSectionResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label(__('actions.hero_section_title'))
+                    ->label('Title')
                     ->searchable()
                     ->sortable()
                     ->badge()
                     ->color('primary'),
 
                 TextColumn::make('subtitle')
-                    ->label(__('actions.hero_section_subtitle'))
+                    ->label('Subtitle')
                     ->limit(50)
                     ->color('gray'),
 
                 ImageColumn::make('background_image')
-                    ->label(__('actions.hero_section_background_image'))
+                    ->label('Background Image')
                     ->size(80)
                     ->circular()
                     ->defaultImageUrl(url('images/placeholder.png')),
 
                 TextColumn::make('background_image_alt')
-                    ->label(__('actions.hero_section_background_image_alt'))
+                    ->label('Background Image Alt')
                     ->limit(30)
                     ->color('gray'),
             ])

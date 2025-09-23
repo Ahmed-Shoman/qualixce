@@ -27,18 +27,18 @@ class OurValueResource extends Resource
             // Big card wrapping the Repeater
             Card::make([
                 Repeater::make('cards')
-                    ->label(__('actions.our_values_cards'))
+                    ->label('Cards')
                     ->columns(2) // two columns layout
                     ->collapsible()
                     ->schema([
                         TextInput::make('title')
-                            ->label(__('actions.card_title'))
+                            ->label('Card Title')
                             ->required(),
 
                         TextInput::make('subtitle')
-                            ->label(__('actions.card_subtitle'))
+                            ->label('Card Subtitle')
                             ->required(),
-                    ])
+                    ]),
             ])->columnSpanFull(),
         ]);
     }
@@ -48,7 +48,7 @@ class OurValueResource extends Resource
         return $table->columns([
             // Display each card in a nicer way
             TextColumn::make('cards')
-                ->label(__('actions.our_values_cards'))
+                ->label('Cards')
                 ->formatStateUsing(function ($state) {
                     if (!is_array($state)) return '';
                     $output = '';

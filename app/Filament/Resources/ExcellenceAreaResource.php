@@ -23,23 +23,41 @@ class ExcellenceAreaResource extends Resource
     {
         return $form->schema([
             Card::make([
-                TextInput::make('title')->label('Title')->required(),
-                TextInput::make('subtitle')->label('Subtitle')->required(),
+                TextInput::make('title')
+                    ->label('Title')
+                    ->required(),
+
+                TextInput::make('subtitle')
+                    ->label('Subtitle')
+                    ->required(),
 
                 Repeater::make('cards')
                     ->label('Cards')
                     ->collapsible()
                     ->schema([
-                        TextInput::make('title')->label('Card Title')->required(),
-                        TextInput::make('subtitle')->label('Card Subtitle')->required(),
-                        Textarea::make('description')->label('Description')->required(),
+                        TextInput::make('title')
+                            ->label('Card Title')
+                            ->required(),
+
+                        TextInput::make('subtitle')
+                            ->label('Card Subtitle')
+                            ->required(),
+
+                        Textarea::make('description')
+                            ->label('Description')
+                            ->required(),
+
                         Repeater::make('points')
                             ->label('Points')
                             ->schema([
-                                TextInput::make('point')->label('Point')->required()
+                                TextInput::make('point')
+                                    ->label('Point')
+                                    ->required(),
                             ])
+                            ->columns(1)
                             ->columnSpanFull(),
                     ])
+                    ->columns(1),
             ])->columnSpanFull(),
         ]);
     }
@@ -47,11 +65,17 @@ class ExcellenceAreaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('title')->label('Title')->limit(50),
-            TextColumn::make('subtitle')->label('Subtitle')->limit(50),
+            TextColumn::make('title')
+                ->label('Title')
+                ->limit(50),
+
+            TextColumn::make('subtitle')
+                ->label('Subtitle')
+                ->limit(50),
+
             TextColumn::make('cards')
                 ->label('Cards')
-                ->formatStateUsing(fn($state) => is_array($state) ? count($state) . ' Cards' : 0),
+                ->formatStateUsing(fn ($state) => is_array($state) ? count($state) . ' Cards' : 0),
         ]);
     }
 

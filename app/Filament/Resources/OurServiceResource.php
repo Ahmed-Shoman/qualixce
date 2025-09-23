@@ -23,17 +23,29 @@ class OurServiceResource extends Resource
     {
         return $form->schema([
             Card::make([
-                TextInput::make('title')->label('Title')->required(),
-                TextInput::make('subtitle')->label('Subtitle')->required(),
+                TextInput::make('title')
+                    ->label('Title')
+                    ->required(),
+
+                TextInput::make('subtitle')
+                    ->label('Subtitle')
+                    ->required(),
 
                 Repeater::make('cards')
                     ->label('Cards')
                     ->collapsible()
                     ->schema([
-                        TextInput::make('icon')->label('Icon'),
-                        TextInput::make('title')->label('Card Title')->required(),
-                        TextInput::make('subtitle')->label('Card Subtitle')->required(),
-                    ])
+                        TextInput::make('icon')
+                            ->label('Icon'),
+
+                        TextInput::make('title')
+                            ->label('Card Title')
+                            ->required(),
+
+                        TextInput::make('subtitle')
+                            ->label('Card Subtitle')
+                            ->required(),
+                    ]),
             ])->columnSpanFull(),
         ]);
     }
@@ -41,11 +53,17 @@ class OurServiceResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('title')->label('Title')->limit(50),
-            TextColumn::make('subtitle')->label('Subtitle')->limit(50),
+            TextColumn::make('title')
+                ->label('Title')
+                ->limit(50),
+
+            TextColumn::make('subtitle')
+                ->label('Subtitle')
+                ->limit(50),
+
             TextColumn::make('cards')
                 ->label('Cards')
-                ->formatStateUsing(fn($state) => is_array($state) ? count($state) . ' Cards' : 0),
+                ->formatStateUsing(fn ($state) => is_array($state) ? count($state) . ' Cards' : 0),
         ]);
     }
 

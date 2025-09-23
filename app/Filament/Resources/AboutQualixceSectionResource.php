@@ -28,18 +28,18 @@ class AboutQualixceSectionResource extends Resource
                 ->schema([
                     // Title
                     TextInput::make('title')
-                        ->label(__('about_qualixce.title'))
+                        ->label('Title')
                         ->required()
                         ->maxLength(255),
 
                     // Subtitle
                     TextInput::make('subtitle')
-                        ->label(__('about_qualixce.subtitle'))
+                        ->label('Subtitle')
                         ->maxLength(255),
 
                     // Repeater (cards)
                     Repeater::make('cards')
-                        ->label(__('about_qualixce.cards'))
+                        ->label('Cards')
                         ->collapsible()
                         ->addActionLabel('Add New Card')
                         ->schema([
@@ -49,29 +49,29 @@ class AboutQualixceSectionResource extends Resource
                                 ->default(0),
 
                             TextInput::make('icon')
-                                ->label(__('about_qualixce.card_icon')),
+                                ->label('Card Icon'),
 
                             TextInput::make('title')
-                                ->label(__('about_qualixce.card_title'))
+                                ->label('Card Title')
                                 ->required()
                                 ->maxLength(255),
 
                             Textarea::make('subtitle')
-                                ->label(__('about_qualixce.card_subtitle'))
+                                ->label('Card Subtitle')
                                 ->rows(3),
 
                             FileUpload::make('image')
-                                ->label(__('about_qualixce.card_image'))
+                                ->label('Card Image')
                                 ->image()
                                 ->directory('about-qualixce-cards')
                                 ->imagePreviewHeight('150')
                                 ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
                         ])
-                        ->columns(1), // الكروت نفسها كمان field تحت field
+                        ->columns(1),
 
                     // Main image
                     FileUpload::make('image')
-                        ->label(__('about_qualixce.image'))
+                        ->label('Main Image')
                         ->image()
                         ->directory('about-qualixce')
                         ->imagePreviewHeight('250')
@@ -79,10 +79,10 @@ class AboutQualixceSectionResource extends Resource
 
                     // Alt text
                     TextInput::make('image_alt')
-                        ->label(__('about_qualixce.image_alt'))
+                        ->label('Alt Text')
                         ->maxLength(255),
                 ])
-                ->columns(1) // كل حاجة تحت بعض
+                ->columns(1)
                 ->columnSpanFull(),
         ]);
     }
@@ -91,20 +91,20 @@ class AboutQualixceSectionResource extends Resource
     {
         return $table->columns([
             TextColumn::make('title')
-                ->label(__('about_qualixce.title'))
+                ->label('Title')
                 ->searchable()
                 ->sortable(),
 
             TextColumn::make('subtitle')
-                ->label(__('about_qualixce.subtitle'))
+                ->label('Subtitle')
                 ->limit(50),
 
             TextColumn::make('cards')
-                ->label(__('about_qualixce.cards_count'))
+                ->label('Cards Count')
                 ->formatStateUsing(fn ($state) => is_array($state) ? count($state) : 0),
 
             ImageColumn::make('image')
-                ->label(__('about_qualixce.image'))
+                ->label('Main Image')
                 ->rounded()
                 ->size(100),
         ])
