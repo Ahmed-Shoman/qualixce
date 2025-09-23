@@ -19,7 +19,7 @@ class AboutQualixceSectionResource extends Resource
 {
     protected static ?string $model = AboutQualixceSection::class;
     protected static ?string $navigationIcon = 'heroicon-o-information-circle';
-    protected static ?string $navigationLabel = 'About Qualixce';
+    protected static ?string $navigationLabel = 'About Qualiexce';
 
     public static function form(Form $form): Form
     {
