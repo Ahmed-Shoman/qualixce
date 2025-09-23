@@ -12,7 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Support\Str;
 
 class HeroSectionResource extends Resource
 {
@@ -34,35 +34,36 @@ class HeroSectionResource extends Resource
 
                     TextInput::make('subtitle')
                         ->label('Subtitle')
+                        ->required()
                         ->maxLength(255),
                 ])
-                ->columns([
-                    'default' => 1,
-                    'sm' => 2,
-                ])
-                ->extraAttributes(['class' => 'bg-gray-50 shadow-sm border border-gray-200 rounded-lg p-6']),
+                ->columns(1)                 ->extraAttributes(['class' => 'bg-white shadow border border-gray-200 rounded-xl p-6']),
 
             Card::make()
                 ->schema([
-                    FileUpload::make('background_image')
-                        ->label('Background Image')
-                        ->image()
+                    FileUpload::make('background_media')
+                        ->label('Background (Image or Video)')
                         ->directory('hero-sections')
                         ->required()
                         ->imagePreviewHeight('200')
-                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
+                        ->acceptedFileTypes([
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                            'video/mp4',
+                            'video/webm',
+                            'video/ogg',
+                        ])
+                        ->maxSize(20480) // 20MB
+                        ->previewable(true),
 
-                    TextInput::make('background_image_alt')
-                        ->label('Background Image Alt')
-                        ->required()
-                        ->maxLength(255),
+                    TextInput::make('background_media_alt')
+                        ->label('Background Alt Text')
+                        ->maxLength(255)
                 ])
-                ->columns([
-                    'default' => 1,
-                    'sm' => 2,
-                ])
-                ->extraAttributes(['class' => 'bg-gray-50 shadow-sm border border-gray-200 rounded-lg p-6']),
-        ])->columns(1);
+                ->columns(1) // << هنا كمان الحقول فوق بعض
+                ->extraAttributes(['class' => 'bg-white shadow border border-gray-200 rounded-xl p-6']),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -79,22 +80,36 @@ class HeroSectionResource extends Resource
                 TextColumn::make('subtitle')
                     ->label('Subtitle')
                     ->limit(50)
+                    ->tooltip(fn ($record) => $record->subtitle)
                     ->color('gray'),
 
-                ImageColumn::make('background_image')
-                    ->label('Background Image')
-                    ->size(80)
-                    ->circular()
-                    ->defaultImageUrl(url('images/placeholder.png')),
+                TextColumn::make('background_media')
+                    ->label('Media')
+                    ->formatStateUsing(fn ($state) =>
+                        $state && Str::endsWith($state, ['.mp4', '.webm', '.ogg'])
+                            ? '🎥 Video'
+                            : '🖼️ Image'
+                    )
+                    ->url(fn ($state) => $state ? url('storage/' . $state) : null)
+                    ->openUrlInNewTab()
+                    ->icon(fn ($state) =>
+                        $state && Str::endsWith($state, ['.mp4', '.webm', '.ogg'])
+                            ? 'heroicon-o-video-camera'
+                            : 'heroicon-o-photo'
+                    )
+                    ->sortable(),
 
-                TextColumn::make('background_image_alt')
-                    ->label('Background Image Alt')
+                TextColumn::make('background_media_alt')
+                    ->label('Alt Text')
                     ->limit(30)
+                    ->tooltip(fn ($record) => $record->background_media_alt)
                     ->color('gray'),
             ])
             ->striped()
             ->defaultSort('title', 'asc')
+            ->filters([])
             ->actions([
+                \Filament\Tables\Actions\ViewAction::make(),
                 \Filament\Tables\Actions\EditAction::make(),
                 \Filament\Tables\Actions\DeleteAction::make(),
             ])
