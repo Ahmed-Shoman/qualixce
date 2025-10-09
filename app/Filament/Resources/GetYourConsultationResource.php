@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GetYourConsultationResource\Pages;
 use App\Models\GetYourConsultation;
 use Filament\Forms\Form;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -22,109 +21,140 @@ class GetYourConsultationResource extends Resource
 {
     protected static ?string $model = GetYourConsultation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
+    protected static ?string $navigationIcon  = 'heroicon-o-chat-bubble-left-ellipsis';
     protected static ?string $navigationLabel = 'Consultation Requests';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $pluralLabel     = 'Consultation Requests';
+    protected static ?string $modelLabel      = 'Consultation Request';
+    protected static ?int $navigationSort     = 2;
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('طلبات الموقع');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Consultation Requests');
+    }
+
+    public static function getPluralLabel(): ?string
+    {
+        return __('Consultation Requests');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('Consultation Request');
+    }
+
+    /**
+     * ---------- Form ----------
+     */
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Card::make()
+            Section::make(__('Consultation Request Info'))
+                ->description(__('الرجاء إدخال بيانات الاستشارة المطلوبة'))
                 ->schema([
-                    Section::make('Consultation Request Info')->schema([
-                        TextInput::make('name')
-                            ->label('Name')
-                            ->required()
-                            ->maxLength(100),
+                    TextInput::make('name')
+                        ->label(__('Name'))
+                        ->required()
+                        ->maxLength(100),
 
-                        TextInput::make('mobile_phone')
-                            ->label('Mobile Phone')
-                            ->tel()
-                            ->required()
-                            ->maxLength(20),
+                    TextInput::make('mobile_phone')
+                        ->label(__('Mobile Phone'))
+                        ->tel()
+                        ->required()
+                        ->maxLength(20),
 
-                        TextInput::make('email')
-                            ->label('Email')
-                            ->email()
-                            ->required()
-                            ->maxLength(150),
+                    TextInput::make('email')
+                        ->label(__('Email'))
+                        ->email()
+                        ->required()
+                        ->maxLength(150),
 
-                        Textarea::make('message')
-                            ->label('Message')
-                            ->rows(6)
-                            ->required(),
-                    ]),
-                ])->columns(2),
+                    Textarea::make('message')
+                        ->label(__('Message'))
+                        ->rows(6)
+                        ->required(),
+                ])
+                ->columns(2),
         ]);
     }
 
+    /**
+     * ---------- Table ----------
+     */
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Name')
+                    ->label(__('Name'))
                     ->searchable()
                     ->sortable()
                     ->copyable(),
 
                 TextColumn::make('mobile_phone')
-                    ->label('Mobile Phone')
+                    ->label(__('Mobile Phone'))
                     ->searchable()
                     ->copyable()
                     ->url(fn ($record) => "tel:{$record->mobile_phone}", true),
 
                 TextColumn::make('email')
-                    ->label('Email')
+                    ->label(__('Email'))
                     ->searchable()
                     ->copyable()
                     ->url(fn ($record) => "mailto:{$record->email}", true),
 
                 TextColumn::make('message')
-                    ->label('Message')
+                    ->label(__('Message'))
                     ->limit(40)
                     ->tooltip(fn (?GetYourConsultation $record) => $record?->message ?? ''),
 
                 BadgeColumn::make('created_at')
-                    ->label('Requested At')
+                    ->label(__('Requested At'))
                     ->dateTime('d M Y - H:i')
                     ->color('info'),
             ])
             ->filters([
                 Filter::make('recent')
-                    ->label('Recent Requests')
+                    ->label(__('Recent Requests'))
                     ->query(fn ($query) => $query->latest()),
 
                 Filter::make('email_gmail')
-                    ->label('Gmail Only')
+                    ->label(__('Gmail Only'))
                     ->query(fn ($query) => $query->where('email', 'like', '%@gmail.com')),
             ])
             ->actions([
                 ViewAction::make()
+                    ->label(__('عرض'))
                     ->modalHeading(fn (?GetYourConsultation $record) =>
                         $record ? "Consultation — {$record->name}" : "Consultation Details"
                     )
                     ->modalWidth('lg')
-                    ->modalContent(function (?GetYourConsultation $record) {
-                        if (! $record) return null;
+                    ->modalContent(fn (?GetYourConsultation $record) =>
+                        $record ? view('filament.consultations.view', ['record' => $record]) : null
+                    ),
 
-                        return view('filament.consultations.view', ['record' => $record]);
-                    }),
-
-                DeleteAction::make()->requiresConfirmation(),
+                DeleteAction::make()->label(__('حذف'))->requiresConfirmation(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make(),
+                DeleteBulkAction::make()->label(__('حذف المحدد')),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->striped();
     }
 
+    /**
+     * ---------- Pages ----------
+     */
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListGetYourConsultations::route('/'),
+            'index'  => Pages\ListGetYourConsultations::route('/'),
             'create' => Pages\CreateGetYourConsultation::route('/create'),
-            'edit' => Pages\EditGetYourConsultation::route('/{record}/edit'),
+            'edit'   => Pages\EditGetYourConsultation::route('/{record}/edit'),
         ];
     }
 }

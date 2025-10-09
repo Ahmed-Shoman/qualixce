@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AboutQualixceSectionResource\Pages;
 use App\Models\AboutQualixceSection;
 use Filament\Forms\Form;
-use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -18,113 +18,175 @@ use Filament\Tables\Columns\TextColumn;
 class AboutQualixceSectionResource extends Resource
 {
     protected static ?string $model = AboutQualixceSection::class;
-    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
-    protected static ?string $navigationLabel = 'About Qualixce';
 
+    protected static ?string $navigationIcon  = 'heroicon-o-information-circle';
+    protected static ?string $navigationLabel = 'About Qualixce';
+    protected static ?string $pluralLabel     = 'About Qualixce Sections';
+    protected static ?string $modelLabel      = 'About Qualixce Section';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('المحتوى');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('About Qualixce');
+    }
+
+    public static function getPluralLabel(): ?string
+    {
+        return __('About Qualixce Sections');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('About Qualixce Section');
+    }
+
+    /**
+     * --------- Form ---------
+     */
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Card::make()
+
+            Section::make(__('البيانات الأساسية'))
+                ->description(__('أدخل البيانات الأساسية للقسم'))
+                ->icon('heroicon-o-information-circle')
+                ->collapsible()
                 ->schema([
-                    // Title
                     TextInput::make('title')
-                        ->label('Title')
+                        ->label(__('العنوان'))
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->prefixIcon('heroicon-o-document-text')
+                        ->placeholder('Enter section title'),
 
-                    // Subtitle
                     TextInput::make('subtitle')
-                        ->label('Subtitle')
-                        ->maxLength(255),
+                        ->label(__('العنوان الفرعي'))
+                        ->maxLength(255)
+                        ->prefixIcon('heroicon-o-chat-bubble-left-right')
+                        ->placeholder('Enter section subtitle'),
+                ])
+                ->columns(2),
 
-                    // Repeater (cards)
+            Section::make(__('الكروت'))
+                ->description(__('إضافة كروت مرتبطة بهذا القسم'))
+                ->icon('heroicon-o-squares-2x2')
+                ->collapsible()
+                ->schema([
                     Repeater::make('cards')
-                        ->label('Cards')
+                        ->label(__('الكروت'))
                         ->collapsible()
-                        ->addActionLabel('Add New Card')
+                        ->collapsed()
+                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
+                        ->addActionLabel(__('➥ إضافة كارت جديد'))
+                        ->reorderable()
+                        ->reorderableWithButtons()
+                        ->cloneable()
                         ->schema([
                             TextInput::make('order')
-                                ->label('Order')
+                                ->label(__('الترتيب'))
                                 ->numeric()
                                 ->default(0),
 
                             TextInput::make('icon')
-                                ->label('Card Icon'),
+                                ->label(__('الأيقونة'))
+                                ->placeholder('مثال: heroicon-o-star'),
 
                             TextInput::make('title')
-                                ->label('Card Title')
+                                ->label(__('عنوان الكارت'))
                                 ->required()
                                 ->maxLength(255),
 
                             Textarea::make('subtitle')
-                                ->label('Card Subtitle')
+                                ->label(__('الوصف'))
                                 ->rows(3),
 
                             FileUpload::make('image')
-                                ->label('Card Image')
+                                ->label(__('صورة الكارت'))
                                 ->image()
                                 ->directory('about-qualixce-cards')
                                 ->imagePreviewHeight('150')
                                 ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
                         ])
-                        ->columns(1),
+                        ->columns(2),
+                ]),
 
-                    // Main image
+            Section::make(__('الصورة الرئيسية'))
+                ->description(__('قم برفع الصورة الرئيسية لهذا القسم'))
+                ->icon('heroicon-o-photo')
+                ->collapsible()
+                ->schema([
                     FileUpload::make('image')
-                        ->label('Main Image')
+                        ->label(__('الصورة الرئيسية'))
                         ->image()
+                        ->imageEditor()
+                        ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                         ->directory('about-qualixce')
                         ->imagePreviewHeight('250')
-                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
+                        ->downloadable()
+                        ->openable()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                        ->helperText('Recommended size: 1200x800px'),
 
-                    // Alt text
                     TextInput::make('image_alt')
-                        ->label('Alt Text')
+                        ->label(__('النص البديل للصورة'))
                         ->maxLength(255),
                 ])
-                ->columns(1)
-                ->columnSpanFull(),
+                ->columns(2),
         ]);
     }
 
+    /**
+     * --------- Table ---------
+     */
     public static function table(Table $table): Table
     {
-        return $table->columns([
-            TextColumn::make('title')
-                ->label('Title')
-                ->searchable()
-                ->sortable(),
+        return $table
+            ->columns([
+                TextColumn::make('title')
+                    ->label(__('العنوان'))
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold'),
 
-            TextColumn::make('subtitle')
-                ->label('Subtitle')
-                ->limit(50),
+                TextColumn::make('subtitle')
+                    ->label(__('العنوان الفرعي'))
+                    ->limit(40),
 
-            TextColumn::make('cards')
-                ->label('Cards Count')
-                ->formatStateUsing(fn ($state) => is_array($state) ? count($state) : 0),
+                TextColumn::make('cards')
+                    ->label(__('عدد الكروت'))
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) : 0),
 
-            ImageColumn::make('image')
-                ->label('Main Image')
-                ->rounded()
-                ->size(100),
-        ])
-        ->striped()
-        ->defaultSort('title', 'asc')
-        ->actions([
-            \Filament\Tables\Actions\EditAction::make(),
-            \Filament\Tables\Actions\DeleteAction::make(),
-        ])
-        ->bulkActions([
-            \Filament\Tables\Actions\DeleteBulkAction::make(),
-        ]);
+                ImageColumn::make('image')
+                    ->label(__('الصورة الرئيسية'))
+                    ->circular()
+                    ->size(60),
+            ])
+            ->defaultSort('title', 'asc')
+            ->striped()
+            ->actions([
+                \Filament\Tables\Actions\ViewAction::make()->label(__('عرض')),
+                \Filament\Tables\Actions\EditAction::make()->label(__('تعديل')),
+                \Filament\Tables\Actions\DeleteAction::make()->label(__('حذف')),
+            ])
+            ->bulkActions([
+                \Filament\Tables\Actions\DeleteBulkAction::make()->label(__('حذف المحدد')),
+            ]);
     }
 
+    /**
+     * --------- Pages ---------
+     */
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAboutQualixceSections::route('/'),
+            'index'  => Pages\ListAboutQualixceSections::route('/'),
             'create' => Pages\CreateAboutQualixceSection::route('/create'),
-            'edit' => Pages\EditAboutQualixceSection::route('/{record}/edit'),
+            'edit'   => Pages\EditAboutQualixceSection::route('/{record}/edit'),
         ];
     }
 }

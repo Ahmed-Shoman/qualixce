@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\SpatieLaravelTranslatablePlugin;
+use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -35,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
 
         ->plugin(
             SpatieLaravelTranslatablePlugin::make()
-                ->defaultLocales(['en', 'ar']), // حدد اللغات اللي محتاجها
+                ->defaultLocales(['en', 'ar'])
         )
 
         ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -45,8 +46,11 @@ class AdminPanelProvider extends PanelProvider
         ])
         ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
         ->widgets([
-            Widgets\AccountWidget::class,
-            Widgets\FilamentInfoWidget::class,
+            \App\Filament\Widgets\StatsOverviewWidget::class,
+            \App\Filament\Widgets\ConsultationRequestsChart::class,
+            \App\Filament\Widgets\ContentDistributionChart::class,
+            \App\Filament\Widgets\ServicesAndValuesChart::class,
+            \App\Filament\Widgets\LatestConsultationsWidget::class,
         ])
         ->middleware([
             EncryptCookies::class,
