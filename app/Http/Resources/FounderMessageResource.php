@@ -11,15 +11,13 @@ class FounderMessageResource extends JsonResource
     {
         return [
             'ar' => [
-                'title' => $this->getTranslation('title', 'ar'),
-                'description' => $this->getTranslation('description', 'ar'),
+                'message' => $this->getTranslation('message', 'ar'),
                 'name' => $this->getTranslation('name', 'ar'),
                 'position' => $this->getTranslation('position', 'ar'),
                 'image' => $this->image,
             ],
             'en' => [
-                'title' => $this->getTranslation('title', 'en'),
-                'description' => $this->getTranslation('description', 'en'),
+                'message' => $this->getTranslation('message', 'en'),
                 'name' => $this->getTranslation('name', 'en'),
                 'position' => $this->getTranslation('position', 'en'),
                 'image' => $this->image,

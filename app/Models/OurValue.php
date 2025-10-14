@@ -12,5 +12,7 @@ class OurValue extends Model
 
     protected $fillable = ['cards'];
 
-    public $translatable = ['cards']; // title & subtitle inside cards
+    protected $casts = [
+        'cards' => 'array',
+    ];
 }

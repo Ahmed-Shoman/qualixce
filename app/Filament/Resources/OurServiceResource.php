@@ -6,12 +6,15 @@ use App\Filament\Resources\OurServiceResource\Pages;
 use App\Models\OurService;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Repeater;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 
@@ -24,26 +27,6 @@ class OurServiceResource extends Resource
     protected static ?string $pluralLabel     = 'Our Services';
     protected static ?string $modelLabel      = 'Our Service';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('محتوى الموقع');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Our Services');
-    }
-
-    public static function getPluralLabel(): ?string
-    {
-        return __('Our Services');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Our Service');
-    }
-
     /**
      * ---------- Form ----------
      */
@@ -51,52 +34,80 @@ class OurServiceResource extends Resource
     {
         return $form->schema([
             Section::make(__('Service Information'))
-                ->description(__('أدخل بيانات الخدمة والعناصر المرتبطة بها'))
+                ->description(__('Enter service information and its cards'))
                 ->icon('heroicon-o-cog')
                 ->collapsible()
                 ->schema([
-                    TextInput::make('title')
-                        ->label(__('Title'))
-                        ->required()
-                        ->maxLength(150)
-                        ->prefixIcon('heroicon-o-document-text')
-                        ->columnSpanFull(),
+                    Tabs::make('Translations')
+                        ->tabs([
+                            Tab::make('English')->schema([
+                                TextInput::make('title.en')
+                                    ->label(__('Title (EN)'))
+                                    ->required()
+                                    ->maxLength(150),
 
-                    TextInput::make('subtitle')
-                        ->label(__('Subtitle'))
-                        ->required()
-                        ->maxLength(250)
-                        ->prefixIcon('heroicon-o-chat-bubble-left-right')
-                        ->columnSpanFull(),
+                                TextInput::make('subtitle.en')
+                                    ->label(__('Subtitle (EN)'))
+                                    ->required()
+                                    ->maxLength(250),
 
-                    Repeater::make('cards')
-                        ->label(__('Cards'))
-                        ->collapsible()
-                        ->collapsed()
-                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
-                        ->minItems(1)
-                        ->reorderable()
-                        ->cloneable()
-                        ->schema([
-                            TextInput::make('icon')
-                                ->label(__('Icon'))
-                                ->hint(__('ضع كلاس أيقونة مثل heroicon أو fontawesome'))
-                                ->prefixIcon('heroicon-o-sparkles'),
+                                Repeater::make('cards.en')
+                                    ->label(__('Cards (EN)'))
+                                    ->minItems(1)
+                                    ->reorderable()
+                                    ->cloneable()
+                                    ->itemLabel(fn(array $state): ?string => $state['title'] ?? null)
+                                    ->schema([
+                                        TextInput::make('title')
+                                            ->label(__('Card Title'))
+                                            ->required()
+                                            ->maxLength(150),
 
-                            TextInput::make('title')
-                                ->label(__('Card Title'))
-                                ->required()
-                                ->maxLength(150)
-                                ->prefixIcon('heroicon-o-tag'),
+                                        TextInput::make('subtitle')
+                                            ->label(__('Card Subtitle'))
+                                            ->required()
+                                            ->maxLength(250),
+                                    ])
+                                    ->columns(1)
+                                    ->collapsed(false)
+                                    ->collapsible(),
+                            ]),
 
-                            TextInput::make('subtitle')
-                                ->label(__('Card Subtitle'))
-                                ->required()
-                                ->maxLength(250)
-                                ->prefixIcon('heroicon-o-bars-3-bottom-left')
-                                ->columnSpanFull(),
-                        ])
-                        ->columns(2),
+                            Tab::make('Arabic')->schema([
+                                TextInput::make('title.ar')
+                                    ->label(__('Title (AR)'))
+                                    ->required()
+                                    ->maxLength(150)
+                                    ->extraAttributes(['dir' => 'rtl']),
+
+                                TextInput::make('subtitle.ar')
+                                    ->label(__('Subtitle (AR)'))
+                                    ->required()
+                                    ->maxLength(250)
+                                    ->extraAttributes(['dir' => 'rtl']),
+
+                                Repeater::make('cards.ar')
+                                    ->label(__('Cards (AR)'))
+                                    ->minItems(1)
+                                    ->reorderable()
+                                    ->cloneable()
+                                    ->itemLabel(fn(array $state): ?string => $state['title'] ?? null)
+                                    ->schema([
+                                        TextInput::make('title')
+                                            ->label(__('Card Title'))
+                                            ->required()
+                                            ->maxLength(150),
+
+                                        TextInput::make('subtitle')
+                                            ->label(__('Card Subtitle'))
+                                            ->required()
+                                            ->maxLength(250),
+                                    ])
+                                    ->columns(1)
+                                    ->collapsed(false)
+                                    ->collapsible(),
+                            ]),
+                        ]),
                 ])
                 ->columns(1),
         ]);
@@ -110,26 +121,29 @@ class OurServiceResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label(__('Title'))
+                    ->label(__('Title (EN)'))
+                    ->formatStateUsing(fn($record) => $record->getTranslation('title', 'en'))
                     ->searchable()
                     ->sortable()
-                    ->limit(50),
+                    ->wrap(),
 
-                TextColumn::make('subtitle')
-                    ->label(__('Subtitle'))
-                    ->limit(50)
-                    ->searchable(),
+                TextColumn::make('title')
+                    ->label(__('Title (AR)'))
+                    ->formatStateUsing(fn($record) => $record->getTranslation('title', 'ar'))
+                    ->color('gray')
+                    ->wrap(),
 
-                TextColumn::make('cards')
-                    ->label(__('Cards'))
-                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) . ' Cards' : 'No Cards'),
+                // TextColumn::make('cards')
+                //     ->label(__('Cards'))
+                //     ->formatStateUsing(fn($state) => is_array($state) ? count($state) . ' Card(s)' : '0 Cards'),
             ])
             ->actions([
-                EditAction::make()->label(__('تعديل')),
-                DeleteAction::make()->label(__('حذف'))->requiresConfirmation(),
+                ViewAction::make()->label(__('View')),
+                EditAction::make()->label(__('Edit')),
+                DeleteAction::make()->label(__('Delete'))->requiresConfirmation(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make()->label(__('حذف المحدد')),
+                DeleteBulkAction::make()->label(__('Delete Selected')),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped();

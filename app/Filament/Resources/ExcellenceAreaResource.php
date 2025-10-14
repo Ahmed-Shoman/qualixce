@@ -6,6 +6,7 @@ use App\Filament\Resources\ExcellenceAreaResource\Pages;
 use App\Models\ExcellenceArea;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
@@ -22,24 +23,9 @@ class ExcellenceAreaResource extends Resource
     protected static ?string $pluralLabel     = 'Excellence Areas';
     protected static ?string $modelLabel      = 'Excellence Area';
 
-    public static function getNavigationGroup(): ?string
+    public static function getTranslatableLocales(): array
     {
-        return __('المحتوى');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Excellence Areas');
-    }
-
-    public static function getPluralLabel(): ?string
-    {
-        return __('Excellence Areas');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Excellence Area');
+        return ['en', 'ar'];
     }
 
     /**
@@ -47,67 +33,66 @@ class ExcellenceAreaResource extends Resource
      */
     public static function form(Form $form): Form
     {
+        $locales = self::getTranslatableLocales();
+
         return $form->schema([
-
-            Section::make(__('البيانات الأساسية'))
-                ->description(__('أدخل العنوان الرئيسي والفرعي لمنطقة التميز'))
-                ->icon('heroicon-o-academic-cap')
+            Section::make(__('Texts'))
+                ->description(__('Main title and subtitle for Excellence Area'))
+                ->icon('heroicon-o-document-text')
                 ->collapsible()
                 ->schema([
-                    TextInput::make('title')
-                        ->label(__('Title'))
-                        ->required()
-                        ->maxLength(255),
-
-                    TextInput::make('subtitle')
-                        ->label(__('Subtitle'))
-                        ->required()
-                        ->maxLength(255),
-                ])
-                ->columns(2),
-
-            Section::make(__('الكروت'))
-                ->description(__('أضف الكروت المرتبطة بمنطقة التميز'))
-                ->icon('heroicon-o-rectangle-stack')
-                ->collapsible()
-                ->schema([
-                    Repeater::make('cards')
-                        ->label(__('Cards'))
-                        ->collapsible()
-                        ->collapsed()
-                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
-                        ->addActionLabel(__('➕ إضافة كارت'))
-                        ->reorderable()
-                        ->cloneable()
-                        ->schema([
-                            TextInput::make('title')
-                                ->label(__('Card Title'))
-                                ->required()
-                                ->maxLength(255),
-
-                            TextInput::make('subtitle')
-                                ->label(__('Card Subtitle'))
-                                ->required()
-                                ->maxLength(255),
-
-                            Textarea::make('description')
-                                ->label(__('Description'))
-                                ->rows(3)
-                                ->required(),
-
-                            Repeater::make('points')
-                                ->label(__('النقاط'))
-                                ->addActionLabel(__('➕ إضافة نقطة'))
+                    Tabs::make('Translations')
+                        ->tabs(array_map(function ($locale) {
+                            return Tabs\Tab::make(strtoupper($locale))
                                 ->schema([
-                                    TextInput::make('point')
-                                        ->label(__('Point'))
-                                        ->required(),
-                                ])
-                                ->columns(1)
-                                ->columnSpanFull(),
-                        ])
-                        ->columns(2),
-                ]),
+                                    TextInput::make("title.{$locale}")
+                                        ->label(__('Title') . " (" . strtoupper($locale) . ")")
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    TextInput::make("subtitle.{$locale}")
+                                        ->label(__('Subtitle') . " (" . strtoupper($locale) . ")")
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    Repeater::make("cards.{$locale}")
+                                        ->label(__('Cards'))
+                                        ->required()
+                                        ->reorderable()
+                                        ->minItems(1)
+                                        ->cloneable()
+                                        ->itemLabel(fn(array $state) => $state['title'] ?? null)
+                                        ->schema([
+                                            TextInput::make('title')
+                                                ->label(__('Card Title'))
+                                                ->required()
+                                                ->maxLength(255),
+
+                                            TextInput::make('subtitle')
+                                                ->label(__('Card Subtitle'))
+                                                ->required()
+                                                ->maxLength(255),
+
+                                            Textarea::make('description')
+                                                ->label(__('Description'))
+                                                ->required()
+                                                ->rows(3),
+
+                                            Repeater::make('points')
+                                                ->label(__('Points'))
+                                                ->required()
+                                                ->schema([
+                                                    TextInput::make('point')
+                                                        ->label(__('Point'))
+                                                        ->required(),
+                                                ])
+                                                ->columns(1),
+                                        ])
+                                        ->columns(1),
+                                ]);
+                        }, $locales)),
+                ])
+                ->columns(1),
         ]);
     }
 
@@ -119,30 +104,32 @@ class ExcellenceAreaResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label(__('Title'))
+                    ->label(__('Title (EN)'))
+                    ->formatStateUsing(fn($record) => $record->getTranslation('title', 'en'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
-                    ->limit(50),
+                    ->wrap(),
 
-                TextColumn::make('subtitle')
-                    ->label(__('Subtitle'))
-                    ->limit(50),
+                TextColumn::make('title')
+                    ->label(__('Title (AR)'))
+                    ->formatStateUsing(fn($record) => $record->getTranslation('title', 'ar'))
+                    ->color('gray')
+                    ->wrap(),
 
                 TextColumn::make('cards')
-                    ->label(__('عدد الكروت'))
-                    ->badge()
-                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) : 0),
+                    ->label(__('Number of Cards'))
+                    ->formatStateUsing(fn($record) => count($record->cards ?? []))
+                    ->sortable(),
             ])
-            ->defaultSort('title', 'asc')
             ->striped()
             ->actions([
-                \Filament\Tables\Actions\ViewAction::make()->label(__('عرض')),
-                \Filament\Tables\Actions\EditAction::make()->label(__('تعديل')),
-                \Filament\Tables\Actions\DeleteAction::make()->label(__('حذف')),
+                \Filament\Tables\Actions\ViewAction::make()->label(__('View')),
+                \Filament\Tables\Actions\EditAction::make()->label(__('Edit')),
+                \Filament\Tables\Actions\DeleteAction::make()->label(__('Delete')),
             ])
             ->bulkActions([
-                \Filament\Tables\Actions\DeleteBulkAction::make()->label(__('حذف المحدد')),
+                \Filament\Tables\Actions\DeleteBulkAction::make()->label(__('Delete Selected')),
             ]);
     }
 

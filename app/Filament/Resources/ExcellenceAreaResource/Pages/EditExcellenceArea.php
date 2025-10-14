@@ -9,11 +9,4 @@ use Filament\Resources\Pages\EditRecord;
 class EditExcellenceArea extends EditRecord
 {
     protected static string $resource = ExcellenceAreaResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
 }

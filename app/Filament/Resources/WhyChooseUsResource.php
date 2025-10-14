@@ -5,13 +5,16 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\WhyChooseUsResource\Pages;
 use App\Models\WhyChooseUs;
 use Filament\Forms\Form;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Section;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -23,24 +26,9 @@ class WhyChooseUsResource extends Resource
     protected static ?string $navigationIcon  = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Why Choose Us';
 
-    public static function getNavigationGroup(): ?string
+    public static function getTranslatableLocales(): array
     {
-        return __('محتوى الموقع');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Why Choose Us');
-    }
-
-    public static function getPluralLabel(): ?string
-    {
-        return __('Why Choose Us');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Why Choose Us');
+        return ['en', 'ar'];
     }
 
     /**
@@ -49,45 +37,85 @@ class WhyChooseUsResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Section::make(__('Why Choose Us Info'))
-                ->description(__('إضافة/تعديل بيانات Why Choose Us'))
-                ->schema([
-                    TextInput::make('title')
-                        ->label(__('Title'))
-                        ->required()
-                        ->maxLength(255),
-
-                    TextInput::make('subtitle')
-                        ->label(__('Subtitle'))
-                        ->required()
-                        ->maxLength(255),
-                ])
-                ->columns(2),
-
-            Section::make(__('Cards'))
-                ->description(__('إضافة الكروت الخاصة بالقسم'))
-                ->schema([
-                    Repeater::make('cards')
-                        ->label(__('Cards'))
-                        ->collapsible()
+            Tabs::make('Translations')
+                ->tabs([
+                    Tab::make('English')
                         ->schema([
-                            TextInput::make('icon')
-                                ->label(__('Icon'))
-                                ->maxLength(100),
+                            Section::make('Why Choose Us (EN)')
+                                ->schema([
+                                    TextInput::make('title.en')
+                                        ->label('Title (EN)')
+                                        ->required()
+                                        ->maxLength(255),
 
-                            TextInput::make('title')
-                                ->label(__('Card Title'))
-                                ->required()
-                                ->maxLength(150),
+                                    TextInput::make('subtitle.en')
+                                        ->label('Subtitle (EN)')
+                                        ->required()
+                                        ->maxLength(255),
 
-                            TextInput::make('subtitle')
-                                ->label(__('Card Subtitle'))
-                                ->required()
-                                ->maxLength(250),
-                        ])
-                        ->columns(3),
+                                    Repeater::make('cards')
+                                        ->label('Cards (EN)')
+                                        ->collapsible()
+                                        ->collapsed(false)
+                                        ->defaultItems(1)
+                                        ->itemLabel(fn(array $state) => $state['title']['en'] ?? 'New Card')
+                                        ->reorderable()
+                                        ->cloneable()
+                                        ->schema([
+                                            TextInput::make('title.en')
+                                                ->label('Card Title (EN)')
+                                                ->required()
+                                                ->maxLength(150),
+
+                                            TextInput::make('subtitle.en')
+                                                ->label('Card Subtitle (EN)')
+                                                ->required()
+                                                ->maxLength(250),
+                                        ])
+                                        ->columns(1),
+                                ])
+                                ->columns(1),
+                        ]),
+
+                    Tab::make('العربية')
+                        ->schema([
+                            Section::make('Why Choose Us (AR)')
+                                ->schema([
+                                    TextInput::make('title.ar')
+                                        ->label('Title (AR)')
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    TextInput::make('subtitle.ar')
+                                        ->label('Subtitle (AR)')
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    Repeater::make('cards')
+                                        ->label('Cards (AR)')
+                                        ->collapsible()
+                                        ->collapsed(false)
+                                        ->defaultItems(1)
+                                        ->itemLabel(fn(array $state) => $state['title']['ar'] ?? 'كارت جديد')
+                                        ->reorderable()
+                                        ->cloneable()
+                                        ->schema([
+                                            TextInput::make('title.ar')
+                                                ->label('Card Title (AR)')
+                                                ->required()
+                                                ->maxLength(150),
+
+                                            TextInput::make('subtitle.ar')
+                                                ->label('Card Subtitle (AR)')
+                                                ->required()
+                                                ->maxLength(250),
+                                        ])
+                                        ->columns(1),
+                                ])
+                                ->columns(1),
+                        ]),
                 ])
-                ->collapsed(false),
+                ->columnSpanFull(),
         ]);
     }
 
@@ -99,31 +127,32 @@ class WhyChooseUsResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label(__('Title'))
+                    ->label('Title')
                     ->limit(50)
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('subtitle')
-                    ->label(__('Subtitle'))
+                    ->label('Subtitle')
                     ->limit(50)
                     ->searchable(),
 
                 BadgeColumn::make('cards')
-                    ->label(__('Cards Count'))
+                    ->label('Cards Count')
                     ->colors([
-                        'danger'  => fn ($state) => is_array($state) && count($state) < 1,
-                        'warning' => fn ($state) => is_array($state) && count($state) < 3,
-                        'success' => fn ($state) => is_array($state) && count($state) >= 3,
+                        'danger'  => fn($state) => is_array($state) && count($state) < 1,
+                        'warning' => fn($state) => is_array($state) && count($state) < 3,
+                        'success' => fn($state) => is_array($state) && count($state) >= 3,
                     ])
-                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) . ' Cards' : '0'),
+                    ->formatStateUsing(fn($state) => is_array($state) ? count($state) . ' Cards' : '0'),
             ])
             ->actions([
-                EditAction::make()->label(__('تعديل')),
-                DeleteAction::make()->label(__('حذف'))->requiresConfirmation(),
+                ViewAction::make()->label('View'),
+                EditAction::make()->label('Edit'),
+                DeleteAction::make()->label('Delete')->requiresConfirmation(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make()->label(__('حذف المحدد')),
+                DeleteBulkAction::make()->label('Delete Selected'),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped();

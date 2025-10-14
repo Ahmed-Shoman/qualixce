@@ -13,14 +13,26 @@ class AboutQualixceSectionResource extends JsonResource
             'ar' => [
                 'title' => $this->getTranslation('title', 'ar'),
                 'subtitle' => $this->getTranslation('subtitle', 'ar'),
-                'cards' => $this->getTranslation('cards', 'ar'),
+                'cards' => collect($this->cards)->map(function ($card) {
+                    return [
+                        'title' => $card['title']['ar'] ?? null,
+                        'subtitle' => $card['subtitle']['ar'] ?? null,
+
+                    ];
+                }),
                 'image' => $this->image ? asset('storage/' . $this->image) : null,
                 'image_alt' => $this->getTranslation('image_alt', 'ar'),
             ],
             'en' => [
                 'title' => $this->getTranslation('title', 'en'),
                 'subtitle' => $this->getTranslation('subtitle', 'en'),
-                'cards' => $this->getTranslation('cards', 'en'),
+                'cards' => collect($this->cards)->map(function ($card) {
+                    return [
+                        'title' => $card['title']['en'] ?? null,
+                        'subtitle' => $card['subtitle']['en'] ?? null,
+
+                    ];
+                }),
                 'image' => $this->image ? asset('storage/' . $this->image) : null,
                 'image_alt' => $this->getTranslation('image_alt', 'en'),
             ],

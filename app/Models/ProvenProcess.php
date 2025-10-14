@@ -11,7 +11,7 @@ class ProvenProcess extends Model
 
     protected $fillable = ['title', 'subtitle', 'cards'];
 
-    public $translatable = ['title', 'subtitle', 'cards'];
+    public $translatable = ['title', 'subtitle','cards'];
 
     protected $casts = [
         'cards' => 'array',

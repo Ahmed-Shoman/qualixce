@@ -76,4 +76,12 @@ class ServicesAndValuesChart extends ChartWidget
             ],
         ];
     }
+
+    /**
+     * Make the widget take full width.
+     */
+    public function getColumnSpan(): int|string|array
+    {
+        return 'full';
+    }
 }

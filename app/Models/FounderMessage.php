@@ -9,18 +9,25 @@ class FounderMessage extends Model
 {
     use HasTranslations;
 
+    // Fillable fields for mass assignment
     protected $fillable = [
-        'title',
-        'description',
+        'message',    // corrected from description → message to match DB
         'name',
         'position',
         'image',
     ];
 
+    // Fields that are translatable
     public $translatable = [
-        'title',
-        'description',
+        'message',
         'name',
         'position',
+    ];
+
+    // Cast JSON fields to arrays automatically
+    protected $casts = [
+        'message'  => 'array',
+        'name'     => 'array',
+        'position' => 'array',
     ];
 }

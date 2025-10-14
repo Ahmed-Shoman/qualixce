@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OurValueResource\Pages;
 use App\Models\OurValue;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Section;
@@ -16,6 +18,7 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ViewAction;
 
 class OurValueResource extends Resource
 {
@@ -26,24 +29,9 @@ class OurValueResource extends Resource
     protected static ?string $navigationIcon  = 'heroicon-o-star';
     protected static ?string $navigationLabel = 'Our Values';
 
-    public static function getNavigationGroup(): ?string
+    public static function getTranslatableLocales(): array
     {
-        return __('محتوى الموقع');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Our Values');
-    }
-
-    public static function getPluralLabel(): ?string
-    {
-        return __('Our Values');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Our Value');
+        return ['en', 'ar'];
     }
 
     /**
@@ -52,27 +40,63 @@ class OurValueResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Section::make(__('Our Values'))
-                ->description(__('أدخل القيم الأساسية وعناصرها'))
-                ->schema([
-                    Repeater::make('cards')
-                        ->label(__('Cards'))
-                        ->collapsible()
-                        ->minItems(1)
+            Tabs::make('Translations')
+                ->tabs([
+                    Tab::make('English')
                         ->schema([
-                            TextInput::make('title')
-                                ->label(__('Card Title'))
-                                ->required()
-                                ->maxLength(150),
+                            Section::make('Our Values (EN)')
+                                ->schema([
+                                    Repeater::make('cards')
+                                        ->label('Cards')
+                                        ->collapsible()
+                                        ->collapsed(false)
+                                        ->defaultItems(1)
+                                        ->itemLabel(fn(array $state) => $state['title']['en'] ?? 'New Card')
+                                        ->addActionLabel('➥ Add new card')
+                                        ->reorderable()
+                                        ->cloneable()
+                                        ->schema([
+                                            TextInput::make('title.en')
+                                                ->label('Title (EN)')
+                                                ->required()
+                                                ->maxLength(150),
+                                            TextInput::make('subtitle.en')
+                                                ->label('Subtitle (EN)')
+                                                ->required()
+                                                ->maxLength(250),
+                                        ])
+                                        ->columns(1),
+                                ]),
+                        ]),
 
-                            TextInput::make('subtitle')
-                                ->label(__('Card Subtitle'))
-                                ->required()
-                                ->maxLength(250),
-                        ])
-                        ->columns(2),
+                    Tab::make('العربية')
+                        ->schema([
+                            Section::make('الكروت (AR)')
+                                ->schema([
+                                    Repeater::make('cards')
+                                        ->label('الكروت')
+                                        ->collapsible()
+                                        ->collapsed(false)
+                                        ->defaultItems(1)
+                                        ->itemLabel(fn(array $state) => $state['title']['ar'] ?? 'كارت جديد')
+                                        ->addActionLabel('➥ إضافة كارت جديد')
+                                        ->reorderable()
+                                        ->cloneable()
+                                        ->schema([
+                                            TextInput::make('title.ar')
+                                                ->label('العنوان (AR)')
+                                                ->required()
+                                                ->maxLength(150),
+                                            TextInput::make('subtitle.ar')
+                                                ->label('الوصف (AR)')
+                                                ->required()
+                                                ->maxLength(250),
+                                        ])
+                                        ->columns(1),
+                                ]),
+                        ]),
                 ])
-                ->columns(2),
+                ->columnSpanFull(),
         ]);
     }
 
@@ -84,20 +108,21 @@ class OurValueResource extends Resource
         return $table
             ->columns([
                 BadgeColumn::make('cards')
-                    ->label(__('Cards Count'))
+                    ->label('Cards Count')
                     ->colors([
-                        'danger'  => fn ($state) => is_array($state) && count($state) < 1,
-                        'warning' => fn ($state) => is_array($state) && count($state) < 3,
-                        'success' => fn ($state) => is_array($state) && count($state) >= 3,
+                        'danger'  => fn($state) => is_array($state) && count($state) < 1,
+                        'warning' => fn($state) => is_array($state) && count($state) < 3,
+                        'success' => fn($state) => is_array($state) && count($state) >= 3,
                     ])
-                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) . ' Cards' : '0'),
+                    ->formatStateUsing(fn($state) => is_array($state) ? count($state) . ' Cards' : '0'),
             ])
             ->actions([
-                EditAction::make()->label(__('تعديل')),
-                DeleteAction::make()->label(__('حذف'))->requiresConfirmation(),
+                ViewAction::make()->label(__('View')),
+                EditAction::make()->label(__('Edit')),
+                DeleteAction::make()->label(__('Delete'))->requiresConfirmation(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make()->label(__('حذف المحدد')),
+                DeleteBulkAction::make()->label(__('Delete Selected')),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped();

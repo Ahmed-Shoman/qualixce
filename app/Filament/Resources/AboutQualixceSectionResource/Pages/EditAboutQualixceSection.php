@@ -10,12 +10,4 @@ class EditAboutQualixceSection extends EditRecord
 {
     protected static string $resource = AboutQualixceSectionResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-                        Actions\LocaleSwitcher::make(),
-
-        ];
-    }
 }

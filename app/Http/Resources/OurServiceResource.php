@@ -16,12 +16,12 @@ class OurServiceResource extends JsonResource
             $data[$locale] = [
                 'title' => $this->getTranslation('title', $locale),
                 'subtitle' => $this->getTranslation('subtitle', $locale),
-                'cards' => collect($this->getTranslation('cards', $locale))
+                'cards' => collect($this->cards[$locale] ?? [])
                     ->map(fn($card) => [
-                        'icon' => $card['icon'] ?? null,
                         'title' => $card['title'] ?? null,
                         'subtitle' => $card['subtitle'] ?? null,
-                    ]),
+                    ])
+                    ->toArray(),
             ];
         }
 

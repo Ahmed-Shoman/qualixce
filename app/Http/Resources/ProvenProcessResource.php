@@ -12,16 +12,24 @@ class ProvenProcessResource extends JsonResource
         $locales = config('app.locales', ['ar', 'en']);
 
         $data = [];
+
         foreach ($locales as $locale) {
+            $cards = $this->getTranslation('cards', $locale);
+
+            // Ensure cards is an array
+            if (!is_array($cards)) {
+                $cards = [];
+            }
+
             $data[$locale] = [
-                'title' => $this->getTranslation('title', $locale),
-                'subtitle' => $this->getTranslation('subtitle', $locale),
-                'cards' => collect($this->getTranslation('cards', $locale))
+                'title' => $this->getTranslation('title', $locale) ?? '',
+                'subtitle' => $this->getTranslation('subtitle', $locale) ?? '',
+                'cards' => collect($cards)
                     ->map(fn($card) => [
-                        'icon' => $card['icon'] ?? null,
                         'title' => $card['title'] ?? null,
-                        'subtitle' => $card['subtitle'] ?? null,
-                    ]),
+                        'description' => $card['description'] ?? null,
+                    ])
+                    ->values(), // numeric keys
             ];
         }
 

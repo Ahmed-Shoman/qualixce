@@ -2,23 +2,36 @@
 
 namespace App\Filament\Resources\HeroSectionResource\Pages;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use App\Filament\Resources\HeroSectionResource;
 use App\Models\HeroSection;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Actions\CreateAction;
+
 
 class ListHeroSections extends ListRecords
 {
-    use ListRecords\Concerns\Translatable;
-
     protected static string $resource = HeroSectionResource::class;
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        // ✅ If no records exist → redirect to create page
+        if (HeroSection::count() === 0) {
+            $this->redirect(HeroSectionResource::getUrl('create'));
+        }
+    }
 
     protected function getHeaderActions(): array
     {
+        // ✅ Disable the "Create" button if a record already exists
+        if (HeroSection::count() >= 1) {
+            return [];
+        }
+
+        // ✅ Show "Create" button only when there are no records
         return [
-            Actions\CreateAction::make()
-                ->visible(fn () => HeroSection::count() === 0), // يظهر فقط لو مفيش بيانات
-            Actions\LocaleSwitcher::make(),
+            CreateAction::make()->label(__('Add Hero Section')),
         ];
     }
 }

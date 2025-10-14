@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HeroSectionController;
 use App\Http\Controllers\Api\AboutQualixceSectionController;
-use App\Http\Controllers\Api\FounderMessageController;   // ✅ الصح 
+use App\Http\Controllers\Api\FounderMessageController;   // ✅ الصح
 
 
 
@@ -38,15 +38,15 @@ Route::prefix('about-qualixce')->group(function () {
     Route::delete('/{aboutQualixceSection}', [AboutQualixceSectionController::class, 'destroy']); // DELETE section
 });
 
-use App\Http\Controllers\Api\OurValueSectionController;
+use App\Http\Controllers\Api\OurValueController;
 
 Route::prefix('our-values')->group(function () {
-    Route::get('/', [OurValueSectionController::class, 'index']);       // GET all sections
-    Route::post('/', [OurValueSectionController::class, 'store']);      // CREATE new section
-    Route::get('{ourValueSection}', [OurValueSectionController::class, 'show']);  // GET single section
-    Route::put('{ourValueSection}', [OurValueSectionController::class, 'update']); // UPDATE section
-    Route::patch('{ourValueSection}', [OurValueSectionController::class, 'update']); // PATCH section
-    Route::delete('{ourValueSection}', [OurValueSectionController::class, 'destroy']); // DELETE section
+    Route::get('/', [OurValueController::class, 'index']);       // GET all sections
+    Route::post('/', [OurValueController::class, 'store']);      // CREATE new section
+    Route::get('{ourValueSection}', [OurValueController::class, 'show']);  // GET single section
+    Route::put('{ourValueSection}', [OurValueController::class, 'update']); // UPDATE section
+    Route::patch('{ourValueSection}', [OurValueController::class, 'update']); // PATCH section
+    Route::delete('{ourValueSection}', [OurValueController::class, 'destroy']); // DELETE section
 });
 
 use App\Http\Controllers\Api\WhyChooseUsController;

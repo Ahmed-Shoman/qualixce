@@ -9,10 +9,10 @@ return new class extends Migration {
     {
         Schema::create('hero_sections', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('subtitle')->nullable();
+            $table->json('title')->nullable();
+            $table->json('subtitle')->nullable();
             $table->string('background_image')->nullable();
-            $table->string('background_image_alt')->nullable(); // ← حقل ALT
+            $table->json('background_image_alt')->nullable();
             $table->timestamps();
         });
     }

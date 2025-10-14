@@ -1,5 +1,5 @@
 <?php
-// Model: AboutQualixceSection.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,9 +18,23 @@ class AboutQualixceSection extends Model
         'image_alt',
     ];
 
-    public $translatable = ['title', 'subtitle', 'cards', 'image_alt'];
+    /**
+     * Translatable fields using Spatie
+     */
+    public $translatable = [
+        'title',
+        'subtitle',
+        'image_alt',
+        
+    ];
 
+    /**
+     * Casts for proper handling of JSON fields
+     */
     protected $casts = [
-        'cards' => 'array',
+        'title' => 'array',
+        'subtitle' => 'array',
+        'image_alt' => 'array',
+        'cards' => 'array', // Holds multiple cards with multilingual data
     ];
 }

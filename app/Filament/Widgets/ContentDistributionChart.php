@@ -67,4 +67,12 @@ class ContentDistributionChart extends ChartWidget
     {
         return 'doughnut';
     }
+
+    /**
+     * Make the widget take full width.
+     */
+    public function getColumnSpan(): int|string|array
+    {
+        return 'full';
+    }
 }

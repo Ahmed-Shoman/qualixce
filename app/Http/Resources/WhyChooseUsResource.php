@@ -16,14 +16,7 @@ class WhyChooseUsResource extends JsonResource
             $data[$locale] = [
                 'title' => $this->getTranslation('title', $locale),
                 'subtitle' => $this->getTranslation('subtitle', $locale),
-                'cards' => collect($this->getTranslation('cards', $locale))
-                    ->map(function ($card) {
-                        return [
-                            'icon' => $card['icon'] ?? null,
-                            'title' => $card['title'] ?? null,
-                            'subtitle' => $card['subtitle'] ?? null,
-                        ];
-                    }),
+                'cards' => $this->getCards($locale), // call the method from model
             ];
         }
 

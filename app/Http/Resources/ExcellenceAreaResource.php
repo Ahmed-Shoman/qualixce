@@ -12,17 +12,21 @@ class ExcellenceAreaResource extends JsonResource
         $locales = config('app.locales', ['ar', 'en']);
 
         $data = [];
+
         foreach ($locales as $locale) {
+            $cards = $this->cards[$locale] ?? []; // get cards for this locale
+
             $data[$locale] = [
                 'title' => $this->getTranslation('title', $locale),
                 'subtitle' => $this->getTranslation('subtitle', $locale),
-                'cards' => collect($this->getTranslation('cards', $locale))
+                'cards' => collect($cards)
                     ->map(fn($card) => [
                         'title' => $card['title'] ?? null,
                         'subtitle' => $card['subtitle'] ?? null,
                         'description' => $card['description'] ?? null,
                         'points' => $card['points'] ?? [],
-                    ]),
+                    ])
+                    ->values(),
             ];
         }
 

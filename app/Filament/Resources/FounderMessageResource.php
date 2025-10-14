@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\FounderMessageResource\Pages;
 use App\Models\FounderMessage;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -23,24 +25,9 @@ class FounderMessageResource extends Resource
     protected static ?string $pluralLabel     = 'Founder Messages';
     protected static ?string $modelLabel      = 'Founder Message';
 
-    public static function getNavigationGroup(): ?string
+    public static function getTranslatableLocales(): array
     {
-        return __('المحتوى');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Founder Message');
-    }
-
-    public static function getPluralLabel(): ?string
-    {
-        return __('Founder Messages');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Founder Message');
+        return ['en', 'ar'];
     }
 
     /**
@@ -49,55 +36,69 @@ class FounderMessageResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Tabs::make('Translations')
+                ->tabs([
+                    Tab::make('English')
+                        ->schema([
+                            Section::make('Founder Message (EN)')
+                                ->schema([
+                                    TextInput::make('name.en')
+                                        ->label('Name (EN)')
+                                        ->required()
+                                        ->maxLength(255),
 
-            Section::make(__('البيانات الأساسية'))
-                ->description(__('أدخل العنوان والوصف الخاص برسالة المؤسس'))
-                ->icon('heroicon-o-document-text')
-                ->collapsible()
-                ->schema([
-                    TextInput::make('title')
-                        ->label(__('Title'))
-                        ->required()
-                        ->maxLength(255),
+                                    TextInput::make('position.en')
+                                        ->label('Position (EN)')
+                                        ->required()
+                                        ->maxLength(255),
 
-                    Textarea::make('description')
-                        ->label(__('Description'))
-                        ->rows(5)
-                        ->required(),
+                                    Textarea::make('message.en')
+                                        ->label('Message (EN)')
+                                        ->required()
+                                        ->rows(5),
+                                ])
+                                ->columns(1),
+                        ]),
+
+                    Tab::make('العربية')
+                        ->schema([
+                            Section::make('رسالة المؤسس (AR)')
+                                ->schema([
+                                    TextInput::make('name.ar')
+                                        ->label('الاسم (AR)')
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    TextInput::make('position.ar')
+                                        ->label('المنصب (AR)')
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    Textarea::make('message.ar')
+                                        ->label('رسالة المؤسس (AR)')
+                                        ->required()
+                                        ->rows(5),
+                                ])
+                                ->columns(1),
+                        ]),
                 ])
-                ->columns(1),
+                ->columnSpanFull(),
 
-            Section::make(__('بيانات المؤسس'))
-                ->description(__('أدخل بيانات الشخص صاحب الرسالة'))
-                ->icon('heroicon-o-user-circle')
-                ->collapsible()
+            Section::make('Founder Image')
+                ->description('Upload a professional photo')
                 ->schema([
-                    TextInput::make('name')
-                        ->label(__('Name'))
-                        ->required()
-                        ->maxLength(255)
-                        ->prefixIcon('heroicon-o-user'),
-
-                    TextInput::make('position')
-                        ->label(__('Position'))
-                        ->required()
-                        ->maxLength(255)
-                        ->prefixIcon('heroicon-o-briefcase'),
-
                     FileUpload::make('image')
-                        ->label(__('Founder Image'))
+                        ->label('Founder Image')
+                        ->required()
                         ->image()
                         ->imageEditor()
                         ->imageEditorAspectRatios(['1:1', '4:3'])
                         ->directory('founder-messages')
                         ->imagePreviewHeight('200')
-                        ->avatar()
                         ->downloadable()
-                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                        ->columnSpanFull()
-                        ->helperText('Upload a professional photo'),
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
                 ])
-                ->columns(2),
+                ->columns(1),
         ]);
     }
 
@@ -108,35 +109,34 @@ class FounderMessageResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')
-                    ->label(__('Title'))
-                    ->searchable()
-                    ->sortable()
-                    ->weight('bold')
-                    ->limit(50),
-
                 TextColumn::make('name')
-                    ->label(__('Name'))
-                    ->searchable(),
-
-                TextColumn::make('position')
-                    ->label(__('Position'))
+                    ->label('Name (EN)')
+                    ->getStateUsing(fn($record) => $record->getTranslation('name', 'en'))
                     ->sortable(),
 
+                TextColumn::make('position')
+                    ->label('Position (EN)')
+                    ->getStateUsing(fn($record) => $record->getTranslation('position', 'en'))
+                    ->sortable(),
+
+                TextColumn::make('message')
+                    ->label('Message (EN)')
+                    ->getStateUsing(fn($record) => $record->getTranslation('message', 'en'))
+                    ->limit(50),
+
                 ImageColumn::make('image')
-                    ->label(__('Image'))
+                    ->label('Image')
                     ->rounded()
                     ->size(80),
             ])
-            ->defaultSort('title', 'asc')
             ->striped()
             ->actions([
-                \Filament\Tables\Actions\ViewAction::make()->label(__('عرض')),
-                \Filament\Tables\Actions\EditAction::make()->label(__('تعديل')),
-                \Filament\Tables\Actions\DeleteAction::make()->label(__('حذف')),
+                \Filament\Tables\Actions\ViewAction::make()->label('View'),
+                \Filament\Tables\Actions\EditAction::make()->label('Edit'),
+                \Filament\Tables\Actions\DeleteAction::make()->label('Delete'),
             ])
             ->bulkActions([
-                \Filament\Tables\Actions\DeleteBulkAction::make()->label(__('حذف المحدد')),
+                \Filament\Tables\Actions\DeleteBulkAction::make()->label('Delete Selected'),
             ]);
     }
 

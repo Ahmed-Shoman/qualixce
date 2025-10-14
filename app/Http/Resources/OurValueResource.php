@@ -1,5 +1,5 @@
 <?php
-// Creation: API Resource for OurValueSection
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -9,18 +9,20 @@ class OurValueResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $cards = $this->cards ?? [];
+
         return [
-            'ar' => [
-                'cards' => $this->cards ? collect($this->cards)->map(fn($c) => [
-                    'title' => $c['title']['ar'] ?? null,
-                    'subtitle' => $c['subtitle']['ar'] ?? null,
-                ]) : [],
-            ],
             'en' => [
-                'cards' => $this->cards ? collect($this->cards)->map(fn($c) => [
+                'cards' => array_map(fn($c) => [
                     'title' => $c['title']['en'] ?? null,
                     'subtitle' => $c['subtitle']['en'] ?? null,
-                ]) : [],
+                ], $cards),
+            ],
+            'ar' => [
+                'cards' => array_map(fn($c) => [
+                    'title' => $c['title']['ar'] ?? null,
+                    'subtitle' => $c['subtitle']['ar'] ?? null,
+                ], $cards),
             ],
         ];
     }

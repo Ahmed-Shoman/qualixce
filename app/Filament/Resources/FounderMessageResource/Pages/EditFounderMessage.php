@@ -9,11 +9,4 @@ use Filament\Resources\Pages\EditRecord;
 class EditFounderMessage extends EditRecord
 {
     protected static string $resource = FounderMessageResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
 }

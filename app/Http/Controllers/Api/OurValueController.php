@@ -4,56 +4,50 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OurValueResource as OurValueApiResource;
-use App\Models\OurValueSection;
+use App\Models\OurValue;
 use Illuminate\Http\Request;
 
-
-class OurValueSectionController extends Controller
+class OurValueController extends Controller
 {
-    // GET /api/our-values
     public function index()
     {
-        return OurValueApiResource::collection(OurValueSection::all());
+        return OurValueApiResource::collection(OurValue::all());
     }
 
-    // POST /api/our-values
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'cards' => 'required|array',
-            'cards.*.title' => 'required|array', // ['ar' => '', 'en' => '']
+            'cards' => 'required|array|min:1',
+            'cards.*.title' => 'required|array', // expects ['ar' => '', 'en' => '']
             'cards.*.subtitle' => 'nullable|array',
         ]);
 
-        $ourValueSection = OurValueSection::create($validated);
+        $ourValue = OurValue::create($validated);
 
-        return new OurValueApiResource($ourValueSection);
+        return new OurValueApiResource($ourValue);
     }
 
-    // GET /api/our-values/{id}
-    public function show(OurValueSection $ourValueSection)
+    public function show(OurValue $ourValue)
     {
-        return new OurValueApiResource($ourValueSection);
+        return new OurValueApiResource($ourValue);
     }
 
-    // PUT/PATCH /api/our-values/{id}
-    public function update(Request $request, OurValueSection $ourValueSection)
+    public function update(Request $request, OurValue $ourValue)
     {
         $validated = $request->validate([
-            'cards' => 'sometimes|required|array',
+            'cards' => 'sometimes|required|array|min:1',
             'cards.*.title' => 'required|array',
             'cards.*.subtitle' => 'nullable|array',
         ]);
 
-        $ourValueSection->update($validated);
+        $ourValue->update($validated);
 
-        return new OurValueApiResource($ourValueSection);
+        return new OurValueApiResource($ourValue);
     }
 
-    // DELETE /api/our-values/{id}
-    public function destroy(OurValueSection $ourValueSection)
+    public function destroy(OurValue $ourValue)
     {
-        $ourValueSection->delete();
+        $ourValue->delete();
         return response()->noContent();
     }
 }

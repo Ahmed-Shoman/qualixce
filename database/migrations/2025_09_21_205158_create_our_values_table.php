@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('our_values', function (Blueprint $table) {
             $table->id();
-            $table->json('cards'); // Repeater as JSON
+            $table->json('cards'); 
             $table->timestamps();
         });
     }

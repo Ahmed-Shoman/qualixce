@@ -11,7 +11,7 @@ class ExcellenceArea extends Model
 
     protected $fillable = ['title', 'subtitle', 'cards'];
 
-    public $translatable = ['title', 'subtitle', 'cards'];
+    public $translatable = ['title', 'subtitle'];
 
     protected $casts = [
         'cards' => 'array',

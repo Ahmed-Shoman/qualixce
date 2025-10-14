@@ -63,7 +63,6 @@ class GetYourConsultationResource extends Resource
 
                     TextInput::make('mobile_phone')
                         ->label(__('Mobile Phone'))
-                        ->tel()
                         ->required()
                         ->maxLength(20),
 
@@ -78,7 +77,7 @@ class GetYourConsultationResource extends Resource
                         ->rows(6)
                         ->required(),
                 ])
-                ->columns(2),
+                ->columns(1),
         ]);
     }
 

@@ -1,5 +1,5 @@
 <?php
-// Migration: create_about_qualixce_sections_table
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -9,11 +9,18 @@ return new class extends Migration {
     {
         Schema::create('about_qualixce_sections', function (Blueprint $table) {
             $table->id();
+
+            // ✅ Translatable fields (Spatie)
             $table->json('title');
             $table->json('subtitle')->nullable();
-            $table->json('cards')->nullable(); // array of {icon, title, subtitle} per card
-            $table->string('image')->nullable();
             $table->json('image_alt')->nullable();
+
+            // ✅ Static fields
+            $table->string('image')->nullable();
+
+            // ✅ Cards array [{ icon, title: {en, ar}, subtitle: {en, ar} }]
+            $table->json('cards')->nullable();
+
             $table->timestamps();
         });
     }

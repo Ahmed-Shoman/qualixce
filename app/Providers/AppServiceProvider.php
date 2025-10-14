@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,9 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-       LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
-            $switch
-                ->locales(['ar','en']); // also accepts a closure
-        });
+        // 👇 استخدم اللغة المحفوظة في الـ session من الإضافة FilamentLanguageSwitch
+        if (session()->has('filament_locale')) {
+            App::setLocale(session('filament_locale'));
+        } else {
+            // 👇 الافتراضي
+            App::setLocale(config('app.locale', 'en'));
+        }
     }
 }

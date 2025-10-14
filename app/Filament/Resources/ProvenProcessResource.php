@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -15,6 +16,7 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ViewAction;
 
 class ProvenProcessResource extends Resource
 {
@@ -22,11 +24,6 @@ class ProvenProcessResource extends Resource
 
     protected static ?string $navigationIcon  = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Proven Processes';
-
-    public static function getNavigationGroup(): ?string
-    {
-        return __('محتوى الموقع');
-    }
 
     public static function getNavigationLabel(): string
     {
@@ -49,46 +46,75 @@ class ProvenProcessResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Section::make(__('Proven Process Info'))
-                ->description(__('إضافة/تعديل بيانات الـ Proven Process'))
+
+            Section::make(__('Texts & Cards'))
+                ->description(__('Add / edit the process information in multiple languages'))
                 ->schema([
-                    TextInput::make('title')
-                        ->label(__('Title'))
-                        ->required()
-                        ->maxLength(255),
+                    Tabs::make('Translations')
+                        ->tabs([
+                            Tabs\Tab::make('English')->schema([
+                                TextInput::make('title.en')
+                                    ->label(__('Title (EN)'))
+                                    ->required()
+                                    ->maxLength(255),
 
-                    TextInput::make('subtitle')
-                        ->label(__('Subtitle'))
-                        ->required()
-                        ->maxLength(255),
+                                TextInput::make('subtitle.en')
+                                    ->label(__('Subtitle (EN)'))
+                                    ->required()
+                                    ->maxLength(255),
+
+                                Repeater::make('cards.en')
+                                    ->label(__('Cards (EN)'))
+                                    ->minItems(1)
+                                    ->schema([
+                                        TextInput::make('title')
+                                            ->label(__('Card Title'))
+                                            ->required()
+                                            ->maxLength(150),
+
+
+                                        TextInput::make('description')
+                                            ->label(__('Card Description'))
+                                            ->required()
+                                            ->maxLength(500),
+                                    ])
+                                    ->columns(1)
+                                    ->collapsible(),
+                            ]),
+
+                            Tabs\Tab::make('Arabic')->schema([
+                                TextInput::make('title.ar')
+                                    ->label(__('Title (AR)'))
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->extraAttributes(['dir' => 'rtl']),
+
+                                TextInput::make('subtitle.ar')
+                                    ->label(__('Subtitle (AR)'))
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->extraAttributes(['dir' => 'rtl']),
+
+                                Repeater::make('cards.ar')
+                                    ->label(__('Cards (AR)'))
+                                    ->minItems(1)
+                                    ->schema([
+                                        TextInput::make('title')
+                                            ->label(__('Card Title'))
+                                            ->required()
+                                            ->maxLength(150),
+
+                                        TextInput::make('description')
+                                            ->label(__('Card Description'))
+                                            ->required()
+                                            ->maxLength(500),
+                                    ])
+                                    ->columns(1)
+                                    ->collapsible(),
+                            ]),
+                        ]),
                 ])
-                ->columns(2),
-
-            Section::make(__('Cards'))
-                ->description(__('إضافة العناصر الخاصة بالـ Process'))
-                ->schema([
-                    Repeater::make('cards')
-                        ->label(__('Cards'))
-                        ->collapsible()
-                        ->minItems(1)
-                        ->schema([
-                            TextInput::make('icon')
-                                ->label(__('Icon'))
-                                ->maxLength(100),
-
-                            TextInput::make('title')
-                                ->label(__('Card Title'))
-                                ->required()
-                                ->maxLength(150),
-
-                            TextInput::make('subtitle')
-                                ->label(__('Card Subtitle'))
-                                ->required()
-                                ->maxLength(250),
-                        ])
-                        ->columns(3),
-                ])
-                ->collapsed(false),
+                ->columns(1),
         ]);
     }
 
@@ -100,31 +126,34 @@ class ProvenProcessResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label(__('Title'))
-                    ->limit(50)
+                    ->label(__('Title (EN)'))
+                    ->formatStateUsing(fn($record) => $record->getTranslation('title', 'en'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
-                TextColumn::make('subtitle')
-                    ->label(__('Subtitle'))
-                    ->limit(50)
-                    ->searchable(),
+                TextColumn::make('title')
+                    ->label(__('Title (AR)'))
+                    ->formatStateUsing(fn($record) => $record->getTranslation('title', 'ar'))
+                    ->wrap()
+                    ->color('gray'),
 
                 BadgeColumn::make('cards')
-                    ->label(__('Cards Count'))
+                    ->label(__('Cards Count (EN)'))
+                    ->formatStateUsing(fn($record) => is_array($record->getTranslation('cards', 'en')) ? count($record->getTranslation('cards', 'en')) . ' Cards' : '0')
                     ->colors([
-                        'danger'  => fn ($state) => is_array($state) && count($state) < 1,
-                        'warning' => fn ($state) => is_array($state) && count($state) < 3,
-                        'success' => fn ($state) => is_array($state) && count($state) >= 3,
-                    ])
-                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) . ' Cards' : '0'),
+                        'danger'  => fn($state) => $state < 1,
+                        'warning' => fn($state) => $state < 3,
+                        'success' => fn($state) => $state >= 3,
+                    ]),
             ])
             ->actions([
-                EditAction::make()->label(__('تعديل')),
-                DeleteAction::make()->label(__('حذف'))->requiresConfirmation(),
+                ViewAction::make()->label(__('View')),
+                EditAction::make()->label(__('Edit')),
+                DeleteAction::make()->label(__('Delete'))->requiresConfirmation(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make()->label(__('حذف المحدد')),
+                DeleteBulkAction::make()->label(__('Delete Selected')),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped();

@@ -9,9 +9,15 @@ return new class extends Migration {
     {
         Schema::create('excellence_areas', function (Blueprint $table) {
             $table->id();
-            $table->json('title');        // translatable
-            $table->json('subtitle');     // translatable
-            $table->json('cards');        // array of {title, subtitle, description, points}, translatable
+
+            // Translatable fields
+            $table->json('title');       // Spatie translatable
+            $table->json('subtitle');    // Spatie translatable
+
+            // Cards per locale
+            // Example: { "en": [...], "ar": [...] }
+            $table->json('cards')->nullable();
+
             $table->timestamps();
         });
     }

@@ -9,11 +9,15 @@ return new class extends Migration {
     {
         Schema::create('founder_messages', function (Blueprint $table) {
             $table->id();
-            $table->json('title'); // translatable
-            $table->json('description'); // translatable
-            $table->json('name'); // translatable
-            $table->json('position'); // translatable
-            $table->string('image')->nullable();
+
+            // Translatable fields stored as JSON
+            $table->json('message')->comment('Founder message, translatable'); // note: fixed typo from "massage" → "message"
+            $table->json('name')->comment('Founder name, translatable');
+            $table->json('position')->comment('Founder position, translatable');
+
+            // Optional image for founder
+            $table->string('image')->nullable()->comment('Founder image');
+
             $table->timestamps();
         });
     }

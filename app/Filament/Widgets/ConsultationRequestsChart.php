@@ -57,4 +57,12 @@ class ConsultationRequestsChart extends ChartWidget
             '90' => __('Last 90 days'),
         ];
     }
+
+    /**
+     * Make the widget take full width.
+     */
+    public function getColumnSpan(): int|string|array
+    {
+        return 'full';
+    }
 }
