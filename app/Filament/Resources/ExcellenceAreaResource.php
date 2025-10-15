@@ -56,7 +56,7 @@ class ExcellenceAreaResource extends Resource
                                         ->maxLength(255),
 
                                     Repeater::make("cards.{$locale}")
-                                        ->label(__('Cards'))
+                                        ->label(__('Fields'))
                                         ->required()
                                         ->reorderable()
                                         ->minItems(1)
@@ -64,12 +64,12 @@ class ExcellenceAreaResource extends Resource
                                         ->itemLabel(fn(array $state) => $state['title'] ?? null)
                                         ->schema([
                                             TextInput::make('title')
-                                                ->label(__('Card Title'))
+                                                ->label(__('Field Title'))
                                                 ->required()
                                                 ->maxLength(255),
 
                                             TextInput::make('subtitle')
-                                                ->label(__('Card Subtitle'))
+                                                ->label(__('Field Iso Numbers'))
                                                 ->required()
                                                 ->maxLength(255),
 
@@ -79,11 +79,11 @@ class ExcellenceAreaResource extends Resource
                                                 ->rows(3),
 
                                             Repeater::make('points')
-                                                ->label(__('Points'))
+                                                ->label(__('Features'))
                                                 ->required()
                                                 ->schema([
                                                     TextInput::make('point')
-                                                        ->label(__('Point'))
+                                                        ->label(__('Feature'))
                                                         ->required(),
                                                 ])
                                                 ->columns(1),
