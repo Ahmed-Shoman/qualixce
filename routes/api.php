@@ -73,3 +73,12 @@ Route::apiResource('get-your-consultations', GetYourConsultationController::clas
     use App\Http\Controllers\Api\FoundationMessageController;
 
 Route::apiResource('founder-messages', FounderMessageController::class);
+
+
+use App\Http\Controllers\Api\SettingController;
+
+Route::prefix('settings')->group(function () {
+    Route::get('/', [SettingController::class, 'index']);
+    Route::get('/{id}', [SettingController::class, 'show']);
+    Route::put('/{id}', [SettingController::class, 'update']); // optional
+});
