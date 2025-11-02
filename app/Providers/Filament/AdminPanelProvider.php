@@ -49,23 +49,23 @@ class AdminPanelProvider extends PanelProvider
         ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
         ->widgets([
             // Row 1: Main Stats Overview (4 cards)
-            \App\Filament\Widgets\VisitorCounterWidget::class,
-            // \App\Filament\Widgets\StatsOverviewWidget::class,
+            // \App\Filament\Widgets\VisitorCounterWidget::class,
+            // // \App\Filament\Widgets\StatsOverviewWidget::class,
 
-            // Row 2: Quick Stats (3 cards in one widget)
-            \App\Filament\Widgets\QuickStatsWidget::class,
+            // // Row 2: Quick Stats (3 cards in one widget)
+            // \App\Filament\Widgets\QuickStatsWidget::class,
 
-            // Row 3: Charts Side by Side
-            \App\Filament\Widgets\ConsultationRequestsChart::class,
-            \App\Filament\Widgets\ContentDistributionChart::class,
+            // // Row 3: Charts Side by Side
+            // \App\Filament\Widgets\ConsultationRequestsChart::class,
+            // \App\Filament\Widgets\ContentDistributionChart::class,
 
-            // Row 4: More Charts
-            // \App\Filament\Widgets\ServicesAndValuesChart::class,
-            \App\Filament\Widgets\MonthlyConsultationsChart::class,
+            // // Row 4: More Charts
+            // // \App\Filament\Widgets\ServicesAndValuesChart::class,
+            // \App\Filament\Widgets\MonthlyConsultationsChart::class,
 
-            // Row 5: Activity & Latest Consultations
-            \App\Filament\Widgets\RecentActivityWidget::class,
-            \App\Filament\Widgets\LatestConsultationsWidget::class,
+            // // Row 5: Activity & Latest Consultations
+            // \App\Filament\Widgets\RecentActivityWidget::class,
+            // \App\Filament\Widgets\LatestConsultationsWidget::class,
         ])
         ->middleware([
             EncryptCookies::class,

@@ -6,18 +6,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class SettingResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     */
     public function toArray($request)
     {
         return [
-            'id'    => $this->id,
-            'key'   => $this->key,
-            'type'  => $this->type,
-            'value' => $this->value,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'colors' => [
+                'light' => [
+                    'primary' => $this->primary_color_light,
+                    'secondary' => $this->secondary_color_light,
+                ],
+                'dark' => [
+                    'primary' => $this->primary_color_dark,
+                    'secondary' => $this->secondary_color_dark,
+                ],
+            ],
+            'fonts' => [
+                'ar' => $this->font_family_ar,
+                'en' => $this->font_family_en,
+            ],
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i'),
         ];
     }
 }

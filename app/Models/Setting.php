@@ -6,25 +6,49 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
+    protected $table = 'settings';
+
     protected $fillable = [
-        'key',
-        'value',
-        'type',
+        'primary_color_light',
+        'secondary_color_light',
+        'primary_color_dark',
+        'secondary_color_dark',
+        'font_family_ar',
+        'font_family_en',
     ];
 
-    /**
-     * Get setting value by key (static helper).
-     */
-    public static function getValue(string $key, $default = null)
+    protected $casts = [
+        'primary_color_light' => 'string',
+        'secondary_color_light' => 'string',
+        'primary_color_dark' => 'string',
+        'secondary_color_dark' => 'string',
+        'font_family_ar' => 'string',
+        'font_family_en' => 'string',
+    ];
+
+
+    public static function getDefault(): ?self
     {
-        return static::where('key', $key)->value('value') ?? $default;
+        return self::first();
     }
 
-    /**
-     * Scope to filter by type if needed.
-     */
-    public function scopeType($query, string $type)
+
+    public function getColorsForMode(string $mode = 'light'): array
     {
-        return $query->where('type', $type);
+        return $mode === 'dark'
+            ? [
+                'primary' => $this->primary_color_dark,
+                'secondary' => $this->secondary_color_dark,
+            ]
+            : [
+                'primary' => $this->primary_color_light,
+                'secondary' => $this->secondary_color_light,
+            ];
+    }
+
+
+    public function getFontForLocale(string $locale = 'en'): ?string
+    {
+        return $locale === 'ar' ? $this->font_family_ar : $this->font_family_en;
     }
 }
