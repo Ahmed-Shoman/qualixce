@@ -20,11 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // 👇 استخدم اللغة المحفوظة في الـ session من الإضافة FilamentLanguageSwitch
         if (session()->has('filament_locale')) {
             App::setLocale(session('filament_locale'));
         } else {
-            // 👇 الافتراضي
             App::setLocale(config('app.locale', 'en'));
         }
     }
