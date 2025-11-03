@@ -40,6 +40,7 @@ class OurServiceResource extends Resource
                 ->schema([
                     Tabs::make('Translations')
                         ->tabs([
+                            // English tab
                             Tab::make('English')->schema([
                                 TextInput::make('title.en')
                                     ->label(__('Title (EN)'))
@@ -58,6 +59,12 @@ class OurServiceResource extends Resource
                                     ->cloneable()
                                     ->itemLabel(fn(array $state): ?string => $state['title'] ?? null)
                                     ->schema([
+                                        TextInput::make('icon')
+                                            ->label(__('Card Icon'))
+                                            ->placeholder('e.g. fa-solid fa-star')
+                                            ->maxLength(150)
+                                            ->helperText('Enter Font Awesome or custom icon class'),
+
                                         TextInput::make('title')
                                             ->label(__('Card Title'))
                                             ->required()
@@ -73,6 +80,7 @@ class OurServiceResource extends Resource
                                     ->collapsible(),
                             ]),
 
+                            // Arabic tab
                             Tab::make('Arabic')->schema([
                                 TextInput::make('title.ar')
                                     ->label(__('Title (AR)'))
@@ -93,6 +101,12 @@ class OurServiceResource extends Resource
                                     ->cloneable()
                                     ->itemLabel(fn(array $state): ?string => $state['title'] ?? null)
                                     ->schema([
+                                        TextInput::make('icon')
+                                            ->label(__('Card Icon'))
+                                            ->placeholder('مثلاً fa-solid fa-star')
+                                            ->maxLength(150)
+                                            ->helperText('أدخل كلاس الأيقونة مثل Font Awesome'),
+
                                         TextInput::make('title')
                                             ->label(__('Card Title'))
                                             ->required()
@@ -132,10 +146,6 @@ class OurServiceResource extends Resource
                     ->formatStateUsing(fn($record) => $record->getTranslation('title', 'ar'))
                     ->color('gray')
                     ->wrap(),
-
-                // TextColumn::make('cards')
-                //     ->label(__('Cards'))
-                //     ->formatStateUsing(fn($state) => is_array($state) ? count($state) . ' Card(s)' : '0 Cards'),
             ])
             ->actions([
                 ViewAction::make()->label(__('View')),

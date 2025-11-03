@@ -31,9 +31,7 @@ class WhyChooseUsResource extends Resource
         return ['en', 'ar'];
     }
 
-    /**
-     * ---------- Form ----------
-     */
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -62,6 +60,12 @@ class WhyChooseUsResource extends Resource
                                         ->reorderable()
                                         ->cloneable()
                                         ->schema([
+                                            TextInput::make('icon')
+                                                ->label('Icon (FontAwesome class)')
+                                                ->placeholder('e.g. fa-solid fa-check')
+                                                ->maxLength(100)
+                                                ->required(),
+
                                             TextInput::make('title.en')
                                                 ->label('Card Title (EN)')
                                                 ->required()
@@ -92,7 +96,7 @@ class WhyChooseUsResource extends Resource
                                         ->maxLength(255),
 
                                     Repeater::make('cards')
-                                        ->label('Cards (AR)')
+                                        ->label('الكروت (AR)')
                                         ->collapsible()
                                         ->collapsed(false)
                                         ->defaultItems(1)
@@ -100,13 +104,19 @@ class WhyChooseUsResource extends Resource
                                         ->reorderable()
                                         ->cloneable()
                                         ->schema([
+                                            TextInput::make('icon')
+                                                ->label('الأيقونة (FontAwesome class)')
+                                                ->placeholder('مثلاً fa-solid fa-check')
+                                                ->maxLength(100)
+                                                ->required(),
+
                                             TextInput::make('title.ar')
-                                                ->label('Card Title (AR)')
+                                                ->label('عنوان الكارت (AR)')
                                                 ->required()
                                                 ->maxLength(150),
 
                                             TextInput::make('subtitle.ar')
-                                                ->label('Card Subtitle (AR)')
+                                                ->label('الوصف (AR)')
                                                 ->required()
                                                 ->maxLength(250),
                                         ])
@@ -119,9 +129,7 @@ class WhyChooseUsResource extends Resource
         ]);
     }
 
-    /**
-     * ---------- Table ----------
-     */
+
     public static function table(Table $table): Table
     {
         return $table
@@ -158,9 +166,7 @@ class WhyChooseUsResource extends Resource
             ->striped();
     }
 
-    /**
-     * ---------- Pages ----------
-     */
+
     public static function getPages(): array
     {
         return [

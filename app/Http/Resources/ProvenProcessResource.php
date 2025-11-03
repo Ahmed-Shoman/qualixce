@@ -16,7 +16,6 @@ class ProvenProcessResource extends JsonResource
         foreach ($locales as $locale) {
             $cards = $this->getTranslation('cards', $locale);
 
-            // Ensure cards is an array
             if (!is_array($cards)) {
                 $cards = [];
             }
@@ -28,8 +27,9 @@ class ProvenProcessResource extends JsonResource
                     ->map(fn($card) => [
                         'title' => $card['title'] ?? null,
                         'description' => $card['description'] ?? null,
+                        'icon' => $card['icon'] ?? null,
                     ])
-                    ->values(), // numeric keys
+                    ->values(),
             ];
         }
 

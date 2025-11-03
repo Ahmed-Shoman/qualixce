@@ -34,9 +34,7 @@ class OurValueResource extends Resource
         return ['en', 'ar'];
     }
 
-    /**
-     * ---------- Form ----------
-     */
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -56,6 +54,10 @@ class OurValueResource extends Resource
                                         ->reorderable()
                                         ->cloneable()
                                         ->schema([
+                                            TextInput::make('icon')
+                                                ->label('Icon class (e.g. "fa-solid fa-star")')
+                                                ->helperText('Use FontAwesome or custom class.')
+                                                ->maxLength(150),
                                             TextInput::make('title.en')
                                                 ->label('Title (EN)')
                                                 ->required()
@@ -83,6 +85,10 @@ class OurValueResource extends Resource
                                         ->reorderable()
                                         ->cloneable()
                                         ->schema([
+                                            TextInput::make('icon')
+                                                ->label('أيقونة (Icon)')
+                                                ->helperText('اكتب كود الأيقونة مثل "fa-solid fa-heart"')
+                                                ->maxLength(150),
                                             TextInput::make('title.ar')
                                                 ->label('العنوان (AR)')
                                                 ->required()
@@ -100,9 +106,7 @@ class OurValueResource extends Resource
         ]);
     }
 
-    /**
-     * ---------- Table ----------
-     */
+
     public static function table(Table $table): Table
     {
         return $table
@@ -128,9 +132,7 @@ class OurValueResource extends Resource
             ->striped();
     }
 
-    /**
-     * ---------- Pages ----------
-     */
+
     public static function getPages(): array
     {
         return [

@@ -14,17 +14,18 @@ class ExcellenceAreaResource extends JsonResource
         $data = [];
 
         foreach ($locales as $locale) {
-            $cards = $this->cards[$locale] ?? []; // get cards for this locale
+            $cards = $this->cards[$locale] ?? [];
 
             $data[$locale] = [
-                'title' => $this->getTranslation('title', $locale),
+                'title'    => $this->getTranslation('title', $locale),
                 'subtitle' => $this->getTranslation('subtitle', $locale),
-                'cards' => collect($cards)
+                'cards'    => collect($cards)
                     ->map(fn($card) => [
-                        'title' => $card['title'] ?? null,
-                        'subtitle' => $card['subtitle'] ?? null,
+                        'title'       => $card['title'] ?? null,
+                        'subtitle'    => $card['subtitle'] ?? null,
                         'description' => $card['description'] ?? null,
-                        'points' => $card['points'] ?? [],
+                        'icon'        => $card['icon'] ?? null, // ✅ Added icon here
+                        'points'      => $card['points'] ?? [],
                     ])
                     ->values(),
             ];

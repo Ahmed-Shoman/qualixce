@@ -52,6 +52,7 @@ class ProvenProcessResource extends Resource
                 ->schema([
                     Tabs::make('Translations')
                         ->tabs([
+
                             Tabs\Tab::make('English')->schema([
                                 TextInput::make('title.en')
                                     ->label(__('Title (EN)'))
@@ -67,11 +68,15 @@ class ProvenProcessResource extends Resource
                                     ->label(__('Cards (EN)'))
                                     ->minItems(1)
                                     ->schema([
+                                        TextInput::make('icon')
+                                            ->label(__('Icon (class name)'))
+                                            ->placeholder('e.g., fa-solid fa-star')
+                                            ->maxLength(150),
+
                                         TextInput::make('title')
                                             ->label(__('Card Title'))
                                             ->required()
                                             ->maxLength(150),
-
 
                                         TextInput::make('description')
                                             ->label(__('Card Description'))
@@ -99,15 +104,23 @@ class ProvenProcessResource extends Resource
                                     ->label(__('Cards (AR)'))
                                     ->minItems(1)
                                     ->schema([
+                                        TextInput::make('icon')
+                                            ->label(__('Icon (class name)'))
+                                            ->placeholder('مثلاً fa-solid fa-star')
+                                            ->maxLength(150)
+                                            ->extraAttributes(['dir' => 'rtl']),
+
                                         TextInput::make('title')
                                             ->label(__('Card Title'))
                                             ->required()
-                                            ->maxLength(150),
+                                            ->maxLength(150)
+                                            ->extraAttributes(['dir' => 'rtl']),
 
                                         TextInput::make('description')
                                             ->label(__('Card Description'))
                                             ->required()
-                                            ->maxLength(500),
+                                            ->maxLength(500)
+                                            ->extraAttributes(['dir' => 'rtl']),
                                     ])
                                     ->columns(1)
                                     ->collapsible(),

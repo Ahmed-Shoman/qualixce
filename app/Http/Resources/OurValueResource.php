@@ -9,21 +9,20 @@ class OurValueResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $cards = $this->cards ?? [];
-
         return [
-            'en' => [
-                'cards' => array_map(fn($c) => [
-                    'title' => $c['title']['en'] ?? null,
-                    'subtitle' => $c['subtitle']['en'] ?? null,
-                ], $cards),
-            ],
-            'ar' => [
-                'cards' => array_map(fn($c) => [
-                    'title' => $c['title']['ar'] ?? null,
-                    'subtitle' => $c['subtitle']['ar'] ?? null,
-                ], $cards),
-            ],
+            'cards' => collect($this->cards ?? [])->map(function ($card) {
+                return [
+                    'icon' => $card['icon'] ?? null,
+                    'title' => [
+                        'en' => $card['title']['en'] ?? null,
+                        'ar' => $card['title']['ar'] ?? null,
+                    ],
+                    'subtitle' => [
+                        'en' => $card['subtitle']['en'] ?? null,
+                        'ar' => $card['subtitle']['ar'] ?? null,
+                    ],
+                ];
+            }),
         ];
     }
 }

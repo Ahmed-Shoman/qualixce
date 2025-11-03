@@ -10,6 +10,7 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -77,6 +78,13 @@ class ExcellenceAreaResource extends Resource
                                                 ->label(__('Description'))
                                                 ->required()
                                                 ->rows(3),
+
+                                            // ✅ Added icon input here
+                                            TextInput::make('icon')
+                                                ->label(__('Icon'))
+                                                ->placeholder('e.g. heroicon-o-check-circle')
+                                                ->maxLength(255)
+                                                ->helperText(__('Enter a Heroicon class name or your custom icon identifier.')),
 
                                             Repeater::make('points')
                                                 ->label(__('Features'))

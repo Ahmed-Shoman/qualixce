@@ -43,6 +43,7 @@ class AboutQualixceSectionResource extends Resource
                             TextInput::make('title.en')->label('Title (EN)')->required(),
                             TextInput::make('subtitle.en')->label('Subtitle (EN)')->required(),
                         ]),
+
                         Section::make('Cards (EN)')->schema([
                             Repeater::make('cards')
                                 ->label('Cards')
@@ -53,8 +54,22 @@ class AboutQualixceSectionResource extends Resource
                                 ->reorderable()
                                 ->cloneable()
                                 ->schema([
-                                    TextInput::make('title.en')->label('Card Title (EN)')->required(),
-                                    Textarea::make('subtitle.en')->label('Card Subtitle (EN)')->rows(2)->required(),
+                                    TextInput::make('title.en')
+                                        ->label('Card Title (EN)')
+                                        ->required(),
+
+                                    Textarea::make('subtitle.en')
+                                        ->label('Card Subtitle (EN)')
+                                        ->rows(2)
+                                        ->required(),
+
+                                    FileUpload::make('icon')
+                                        ->label('Card Icon')
+                                        ->image()
+                                        ->directory('about-qualixce/icons')
+                                        ->imageEditor()
+                                        ->maxSize(1024)
+                                        ->columnSpanFull(),
                                 ]),
                         ]),
                     ]),
@@ -65,6 +80,7 @@ class AboutQualixceSectionResource extends Resource
                             TextInput::make('title.ar')->label('العنوان (AR)')->required(),
                             TextInput::make('subtitle.ar')->label('العنوان الفرعي (AR)')->required(),
                         ]),
+
                         Section::make('الكروت (AR)')->schema([
                             Repeater::make('cards')
                                 ->label('الكروت')
@@ -75,9 +91,22 @@ class AboutQualixceSectionResource extends Resource
                                 ->reorderable()
                                 ->cloneable()
                                 ->schema([
-                                    TextInput::make('title.ar')->label('عنوان الكارت (AR)')->required(),
-                                    Textarea::make('subtitle.ar')->label('الوصف (AR)')->rows(2)->required(),
+                                    TextInput::make('title.ar')
+                                        ->label('عنوان الكارت (AR)')
+                                        ->required(),
 
+                                    Textarea::make('subtitle.ar')
+                                        ->label('الوصف (AR)')
+                                        ->rows(2)
+                                        ->required(),
+
+                                    FileUpload::make('icon')
+                                        ->label('أيقونة الكارت')
+                                        ->image()
+                                        ->directory('about-qualixce/icons')
+                                        ->imageEditor()
+                                        ->maxSize(1024)
+                                        ->columnSpanFull(),
                                 ]),
                         ]),
                     ]),
@@ -85,7 +114,12 @@ class AboutQualixceSectionResource extends Resource
                 ->columnSpanFull(),
 
             Section::make('Main Image')->schema([
-                FileUpload::make('image')->label('Main Image')->image()->directory('about-qualixce')->required(),
+                FileUpload::make('image')
+                    ->label('Main Image')
+                    ->image()
+                    ->directory('about-qualixce')
+                    ->required(),
+
                 Tabs::make('Image Alt Text')->tabs([
                     Tab::make('English')->schema([
                         TextInput::make('image_alt.en')->label('Alt Text (EN)')->required(),
@@ -102,8 +136,15 @@ class AboutQualixceSectionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('cards')->label('Cards Count')->badge()->formatStateUsing(fn($state) => is_array($state) ? count($state) : 0),
-                ImageColumn::make('image')->label('Main Image')->size(70)->circular(),
+                TextColumn::make('cards')
+                    ->label('Cards Count')
+                    ->badge()
+                    ->formatStateUsing(fn($state) => is_array($state) ? count($state) : 0),
+
+                ImageColumn::make('image')
+                    ->label('Main Image')
+                    ->size(70)
+                    ->circular(),
             ])
             ->defaultSort('id', 'desc')
             ->actions([
