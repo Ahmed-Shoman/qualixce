@@ -38,7 +38,7 @@ class PartnerResource extends Resource
         $locales = self::getTranslatableLocales();
 
         return $form->schema([
-            // section 1 => texts
+            // Section 1: Texts
             Section::make(__('Partner Texts'))
                 ->schema([
                     Tabs::make('Translations')
@@ -57,7 +57,6 @@ class PartnerResource extends Resource
                 ])
                 ->columns(1),
 
-            // section 2 => images
             Section::make(__('Partner Logos'))
                 ->schema([
                     Repeater::make('images')
@@ -69,6 +68,12 @@ class PartnerResource extends Resource
                                 ->directory('partners')
                                 ->maxSize(2048)
                                 ->required(),
+
+                            TextInput::make('url')
+                                ->label(__('URL'))
+                                ->url()
+                                ->required()
+                                ->placeholder('https://example.com'),
                         ])
                         ->columns(1)
                         ->reorderable()
@@ -77,7 +82,6 @@ class PartnerResource extends Resource
                 ])
                 ->columns(1),
 
-            // section 3 => visibility toggle
             Section::make(__('Visibility'))
                 ->schema([
                     Toggle::make('is_active')
@@ -101,6 +105,11 @@ class PartnerResource extends Resource
                     ->label(__('First Logo'))
                     ->square()
                     ->height(50),
+
+                TextColumn::make('images.0.url')
+                    ->label(__('First URL'))
+                    ->formatStateUsing(fn($record) => data_get($record, 'images.0.url') ?? '-')
+                    ->url(fn($record) => data_get($record, 'images.0.url')),
 
                 IconColumn::make('is_active')
                     ->label(__('Visible'))
