@@ -106,10 +106,10 @@ class PartnerResource extends Resource
                     ->square()
                     ->height(50),
 
-                TextColumn::make('images.0.url')
-                    ->label(__('First URL'))
-                    ->formatStateUsing(fn($record) => data_get($record, 'images.0.url') ?? '-')
-                    ->url(fn($record) => data_get($record, 'images.0.url')),
+                // TextColumn::make('images.0.url')
+                //     ->label(__('First URL'))
+                //     ->formatStateUsing(fn($record) => data_get($record, 'images.0.url') ?? '-')
+                //     ->url(fn($record) => data_get($record, 'images.0.url')),
 
                 IconColumn::make('is_active')
                     ->label(__('Visible'))
