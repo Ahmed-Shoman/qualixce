@@ -64,16 +64,17 @@ class ArticleResource extends Resource
                                 TextInput::make('image_alt.ar')
                                     ->label('Image Alt (AR)')
                                     ->extraAttributes(['dir' => 'rtl']),
-                            ]),
+
+
                         ]),
 
-                    FileUpload::make('image')
+                          FileUpload::make('image')
                         ->label(__('Article Image'))
                         ->directory('articles')
                         ->image()
                         ->imageEditor()
                         ->maxSize(2048),
-
+                            ]),
                     TextInput::make('writer')
                         ->label(__('Writer'))
                         ->placeholder('Enter the author name')

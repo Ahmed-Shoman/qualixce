@@ -82,3 +82,31 @@ Route::prefix('settings')->group(function () {
     Route::get('/{id}', [SettingController::class, 'show']);
     Route::put('/{id}', [SettingController::class, 'update']); // optional
 });
+
+
+Route::apiResource('why-choose-us', WhyChooseUsController::class);
+Route::apiResource('why-choose-us', WhyChooseUsController::class);
+Route::apiResource('why-choose-us', WhyChooseUsController::class);
+
+
+use App\Http\Controllers\Api\PartnerController;
+
+Route::get('partners', [PartnerController::class, 'index']);
+Route::get('partners/{partner}', [PartnerController::class, 'show']);
+
+
+use App\Http\Controllers\Api\ArticleController;
+
+Route::get('articles', [ArticleController::class, 'index']);
+Route::get('articles/{article}', [ArticleController::class, 'show']);
+Route::post('articles', [ArticleController::class, 'store']);
+Route::put('articles/{article}', [ArticleController::class, 'update']);
+Route::delete('articles/{article}', [ArticleController::class, 'destroy']);
+
+use App\Http\Controllers\Api\TestimonialController;
+
+Route::get('testimonials', [TestimonialController::class, 'index']);
+Route::get('testimonials/{testimonial}', [TestimonialController::class, 'show']);
+Route::post('testimonials', [TestimonialController::class, 'store']);
+Route::put('testimonials/{testimonial}', [TestimonialController::class, 'update']);
+Route::delete('testimonials/{testimonial}', [TestimonialController::class, 'destroy']);
