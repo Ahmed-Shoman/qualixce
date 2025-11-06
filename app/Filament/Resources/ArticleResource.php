@@ -2,25 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use \Str;
 use App\Filament\Resources\ArticleResource\Pages;
+use App\Filament\Resources\ArticleResource\Pages\CreateArticle;
+use App\Filament\Resources\ArticleResource\Pages\EditArticle;
+use App\Filament\Resources\ArticleResource\Pages\ListArticles;
 use App\Models\Article;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ArticleResource extends Resource
 {
@@ -30,9 +35,10 @@ class ArticleResource extends Resource
     protected static ?string $modelLabel = 'Article';
     protected static ?string $pluralLabel = 'Articles';
 
-    public static function form(Form $form): Form
-    {
-        return $form->schema([
+   public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
             Section::make(__('Article Information'))
                 ->schema([
                     Tabs::make('Translations')
@@ -41,34 +47,21 @@ class ArticleResource extends Resource
                                 ->schema([
                                     TextInput::make('title.en')
                                         ->label('Title (EN)')
-                                        ->required(),
+                                        ->required()
+                                        ->reactive()
+                                        ->afterStateUpdated(fn ($state, callable $set) =>
+                                            $set('slug.en', Str::slug($state))
+                                        ),
 
                                     TextInput::make('slug.en')
-                                        ->label(__('Slug (EN)'))
+                                        ->label('Slug (EN)')
                                         ->placeholder('auto-generated or custom')
                                         ->unique(table: 'articles', column: 'slug->en', ignoreRecord: true)
-                                        ->required()
                                         ->helperText('Used in the article URL, must be unique.'),
 
-                                    TextInput::make('subtitle.en')
-                                        ->label('Subtitle (EN)'),
-
-                                    Textarea::make('content.en')
-                                        ->label('Content (EN)')
-                                        ->rows(5),
-
-                                    TextInput::make('image_alt.en')
-                                        ->label('Image Alt (EN)'),
-
-                                    TextInput::make('writer')
-                                        ->label(__('Writer'))
-                                        ->placeholder('Enter the author name')
-                                        ->required(),
-
-                                    TextInput::make('category')
-                                        ->label(__('Category'))
-                                        ->placeholder('Enter article category')
-                                        ->required(),
+                                    TextInput::make('subtitle.en')->label('Subtitle (EN)'),
+                                    Textarea::make('content.en')->label('Content (EN)')->rows(5),
+                                    TextInput::make('image_alt.en')->label('Image Alt (EN)'),
                                 ]),
 
                             Tabs\Tab::make('Arabic')
@@ -76,61 +69,42 @@ class ArticleResource extends Resource
                                     TextInput::make('title.ar')
                                         ->label('Title (AR)')
                                         ->required()
+                                        ->reactive()
+                                        ->afterStateUpdated(fn ($state, callable $set) =>
+                                            $set('slug.ar', \Str::slug($state, '-', 'ar'))
+                                        )
                                         ->extraAttributes(['dir' => 'rtl']),
 
                                     TextInput::make('slug.ar')
-                                        ->label(__('Slug (AR)'))
+                                        ->label('Slug (AR)')
                                         ->placeholder('auto-generated or custom')
                                         ->unique(table: 'articles', column: 'slug->ar', ignoreRecord: true)
-                                        ->required()
-                                        ->helperText('Used in the article URL, must be unique.'),
-
-                                    TextInput::make('subtitle.ar')
-                                        ->label('Subtitle (AR)')
+                                        ->helperText('Used in the article URL, must be unique.')
                                         ->extraAttributes(['dir' => 'rtl']),
 
-                                    Textarea::make('content.ar')
-                                        ->label('Content (AR)')
-                                        ->rows(5)
-                                        ->extraAttributes(['dir' => 'rtl']),
+                                    TextInput::make('subtitle.ar')->label('Subtitle (AR)')->extraAttributes(['dir' => 'rtl']),
+                                    Textarea::make('content.ar')->label('Content (AR)')->rows(5)->extraAttributes(['dir' => 'rtl']),
+                                    TextInput::make('image_alt.ar')->label('Image Alt (AR)')->extraAttributes(['dir' => 'rtl']),
 
-                                    TextInput::make('image_alt.ar')
-                                        ->label('Image Alt (AR)')
-                                        ->extraAttributes(['dir' => 'rtl']),
 
-                                    TextInput::make('writer')
-                                        ->label(__('Writer'))
-                                        ->placeholder('Enter the author name')
-                                        ->required(),
-
-                                    TextInput::make('category')
-                                        ->label(__('Category'))
-                                        ->placeholder('Enter article category')
-                                        ->required(),
                                 ]),
 
-                            // ✅ Image moved to its own tab
-                            Tabs\Tab::make(__('Article Image'))
-                                ->schema([
-                                    FileUpload::make('image')
-                                        ->directory('articles')
-                                        ->image()
-                                        ->required()
-                                        ->imageEditor()
-                                        ->maxSize(2048),
-                                ]),
+
                         ]),
 
-
-
-
-
-                    Toggle::make('is_active')
-                        ->label(__('Visible on website'))
-                        ->default(true),
+                         FileUpload::make('image')
+                                        ->directory('articles')
+                                        ->image()
+                                        ->imageEditor()
+                                        ->required()
+                                        ->maxSize(2048),
+                    TextInput::make('writer')->label('Writer')->required(),
+                    TextInput::make('category')->label('Category')->required(),
+                    Toggle::make('is_active')->label(__('Visible on website'))->default(true),
                 ]),
         ]);
-    }
+}
+
 
 
     public static function table(Table $table): Table
