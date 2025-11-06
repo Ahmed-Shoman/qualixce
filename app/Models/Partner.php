@@ -14,6 +14,7 @@ class Partner extends Model
         'title',
         'subtitle',
         'images',
+        'is_active'
     ];
 
     public $translatable = [

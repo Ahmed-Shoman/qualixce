@@ -10,12 +10,19 @@ class PartnerController extends Controller
 {
     public function index()
     {
-        $partners = Partner::latest()->get();
+        // فقط الشركاء الفعالين (الظاهرين)
+        $partners = Partner::where('is_active', true)->latest()->get();
+
         return PartnerResource::collection($partners);
     }
 
     public function show(Partner $partner)
     {
+        // لو عايز تمنع عرض الغير فعالين تقدر تضيف شرط هنا
+        if (! $partner->is_active) {
+            abort(404, 'Partner not found or inactive.');
+        }
+
         return new PartnerResource($partner);
     }
 }

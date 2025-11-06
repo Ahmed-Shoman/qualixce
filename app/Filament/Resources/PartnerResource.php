@@ -11,11 +11,13 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\IconColumn;
 
 class PartnerResource extends Resource
 {
@@ -36,7 +38,7 @@ class PartnerResource extends Resource
         $locales = self::getTranslatableLocales();
 
         return $form->schema([
-            // section 1 => titles (translatable)
+            // section 1 => texts
             Section::make(__('Partner Texts'))
                 ->schema([
                     Tabs::make('Translations')
@@ -55,7 +57,7 @@ class PartnerResource extends Resource
                 ])
                 ->columns(1),
 
-            // section 2 => images (not translatable)
+            // section 2 => images
             Section::make(__('Partner Logos'))
                 ->schema([
                     Repeater::make('images')
@@ -74,6 +76,14 @@ class PartnerResource extends Resource
                         ->collapsed(false),
                 ])
                 ->columns(1),
+
+            // section 3 => visibility toggle
+            Section::make(__('Visibility'))
+                ->schema([
+                    Toggle::make('is_active')
+                        ->label(__('Visible on website'))
+                        ->default(true),
+                ]),
         ]);
     }
 
@@ -91,6 +101,10 @@ class PartnerResource extends Resource
                     ->label(__('First Logo'))
                     ->square()
                     ->height(50),
+
+                IconColumn::make('is_active')
+                    ->label(__('Visible'))
+                    ->boolean(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->json('title');
             $table->json('subtitle')->nullable();
             $table->json('images')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
