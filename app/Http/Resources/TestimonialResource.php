@@ -9,7 +9,7 @@ class TestimonialResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $locales = ['en', 'ar']; // supported locales
+        $locales = ['en', 'ar'];
 
         // Section translations
         $translations = [];
@@ -20,6 +20,7 @@ class TestimonialResource extends JsonResource
             ];
         }
 
+        // Clients (cards)
         $cards = [];
         if (!empty($this->clients)) {
             foreach ($this->clients as $client) {
