@@ -25,11 +25,11 @@ class Article extends Model
 
 
     public $translatable = [
+    'slug',
     'title',
     'subtitle',
     'content',
     'image_alt',
-    'slug',
     'writer',
     'category',
 ];
