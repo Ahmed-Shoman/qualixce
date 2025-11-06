@@ -23,11 +23,8 @@ use Filament\Tables\Columns\IconColumn;
 class TestimonialResource extends Resource
 {
     protected static ?string $model = Testimonial::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
     protected static ?string $navigationLabel = 'Testimonials';
-    protected static ?string $pluralLabel = 'Testimonials';
-    protected static ?string $modelLabel = 'Testimonial';
 
     public static function getTranslatableLocales(): array
     {
@@ -40,63 +37,53 @@ class TestimonialResource extends Resource
 
         return $form->schema([
 
-            // 🟩 Section 1: Titles
-            Section::make(__('Texts'))
-                ->description(__('Add section title & subtitle'))
+            // Section 1: Titles
+            Section::make(__('Section Titles'))
+                ->description(__('Add title & subtitle'))
                 ->schema([
                     Tabs::make('Translations')
-                        ->tabs(array_map(function ($locale) {
-                            return Tabs\Tab::make(strtoupper($locale))
-                                ->schema([
-                                    TextInput::make("title.$locale")
-                                        ->label(__('Title') . " ($locale)")
-                                        ->required(),
-                                    TextInput::make("subtitle.$locale")
-                                        ->label(__('Subtitle') . " ($locale)")
-                                        ->nullable(),
-                                ]);
-                        }, $locales)),
+                        ->tabs(array_map(fn($locale) => Tabs\Tab::make(strtoupper($locale))
+                            ->schema([
+                                TextInput::make("title.$locale")
+                                    ->label(__('Title') . " ($locale)")
+                                    ->required(),
+                                TextInput::make("subtitle.$locale")
+                                    ->label(__('Subtitle') . " ($locale)")
+                                    ->nullable(),
+                            ]), $locales)),
                 ]),
 
-            // 🟩 Section 2: Client Info
-            Section::make(__('Client Info'))
-                ->description(__('Add client name and role'))
+            // Section 2: Clients Repeater
+            Section::make(__('Client Testimonials'))
+                ->description(__('Add clients reviews with details'))
                 ->schema([
-                    Tabs::make('Client Translations')
-                        ->tabs(array_map(function ($locale) {
-                            return Tabs\Tab::make(strtoupper($locale))
-                                ->schema([
-                                    TextInput::make("client_name.$locale")
-                                        ->label(__('Client Name') . " ($locale)")
-                                        ->required(),
-
-                                    TextInput::make("client_role.$locale")
-                                        ->label(__('Client Role / Position') . " ($locale)")
-                                        ->nullable(),
-                                ]);
-                        }, $locales)),
-                ]),
-
-            // 🟩 Section 3: Testimonial Cards
-            Section::make(__('Testimonials Cards'))
-                ->schema([
-                    Repeater::make('cards')
-                        ->label(__('Client Reviews'))
+                    Repeater::make('clients')
+                        ->label(__('Clients'))
                         ->schema([
-                            FileUpload::make('image_url')
+                            FileUpload::make('image')
                                 ->label(__('Client Image'))
                                 ->image()
                                 ->directory('testimonials')
                                 ->maxSize(2048)
                                 ->required(),
 
-                            Textarea::make('description')
-                                ->label(__('Review Text'))
-                                ->rows(3)
-                                ->required(),
+                            Tabs::make('Client Translations')
+                                ->tabs(array_map(fn($locale) => Tabs\Tab::make(strtoupper($locale))
+                                    ->schema([
+                                        TextInput::make("client_name.$locale")
+                                            ->label(__('Client Name') . " ($locale)")
+                                            ->required(),
+                                        TextInput::make("client_role.$locale")
+                                            ->label(__('Client Role / Position') . " ($locale)")
+                                            ->nullable(),
+                                        Textarea::make("review_text.$locale")
+                                            ->label(__('Review Text') . " ($locale)")
+                                            ->rows(3)
+                                            ->required(),
+                                    ]), $locales)),
 
                             TextInput::make('stars')
-                                ->label(__('Stars (1-5)'))
+                                ->label(__('Stars (1–5)'))
                                 ->numeric()
                                 ->minValue(1)
                                 ->maxValue(5)
@@ -108,9 +95,8 @@ class TestimonialResource extends Resource
                         ->minItems(1),
                 ]),
 
-            // 🟩 Section 4: Visibility Toggle
+            // Section 3: Visibility
             Section::make(__('Visibility'))
-                ->description(__('Control whether this section is visible on the website'))
                 ->schema([
                     Toggle::make('is_active')
                         ->label(__('Show on Website'))
@@ -129,27 +115,49 @@ class TestimonialResource extends Resource
                     ->label(__('Title (EN)'))
                     ->formatStateUsing(fn($record) => $record->getTranslation('title', 'en'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->limit(40),
 
-                TextColumn::make('client_name')
-                    ->label(__('Client (EN)'))
-                    ->formatStateUsing(fn($record) => $record->getTranslation('client_name', 'en'))
-                    ->sortable(),
-
-                ImageColumn::make('cards.0.image_url')
+                ImageColumn::make('clients.0.image')
                     ->label(__('First Client Image'))
                     ->square()
                     ->height(50),
+
+                TextColumn::make('clients.0.client_name.en')
+                    ->label(__('First Client Name'))
+                    ->formatStateUsing(fn($record) =>
+                        data_get($record, 'clients.0.client_name.en') ?? '-'
+                    )
+                    ->limit(25)
+                    ->sortable(),
+
+                TextColumn::make('clients.0.client_role.en')
+                    ->label(__('Client Role'))
+                    ->formatStateUsing(fn($record) =>
+                        data_get($record, 'clients.0.client_role.en') ?? '-'
+                    )
+                    ->limit(25),
+
+                TextColumn::make('clients.0.stars')
+                    ->label(__('Stars ⭐'))
+                    ->formatStateUsing(fn($record) =>
+                        str_repeat('⭐', (int) data_get($record, 'clients.0.stars', 0))
+                    )
+                    ->sortable(),
 
                 IconColumn::make('is_active')
                     ->label(__('Active'))
                     ->boolean()
                     ->trueIcon('heroicon-o-eye')
-                    ->falseIcon('heroicon-o-eye-slash'),
+                    ->falseIcon('heroicon-o-eye-slash')
+                    ->sortable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
             ])
             ->striped();
     }

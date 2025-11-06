@@ -10,27 +10,21 @@ class Testimonial extends Model
 {
     use HasFactory, HasTranslations;
 
+    // ✅ Only the actual translatable columns on your table
+    public $translatable = [
+        'title',
+        'subtitle',
+    ];
 
     protected $fillable = [
         'title',
         'subtitle',
-        'client_name',
-        'client_role',
-        'cards',
+        'clients', // JSON array of client data
         'is_active',
     ];
 
-
-    public $translatable = [
-        'title',
-        'subtitle',
-        'client_name',
-        'client_role',
-    ];
-
-
     protected $casts = [
-        'cards' => 'array',
+        'clients' => 'array',   // important for Repeater / API
         'is_active' => 'boolean',
     ];
 }

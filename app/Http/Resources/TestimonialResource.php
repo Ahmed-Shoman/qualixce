@@ -9,29 +9,45 @@ class TestimonialResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $locales = config('app.locales', ['ar', 'en']);
-        $data = [];
+        $locales = ['en', 'ar']; // supported locales
 
+        // Section translations
+        $translations = [];
         foreach ($locales as $locale) {
-            $cards = $this->cards ?? [];
-
-            $data[$locale] = [
-                'title'        => $this->getTranslation('title', $locale),
-                'subtitle'     => $this->getTranslation('subtitle', $locale),
-                'client_name'  => $this->getTranslation('client_name', $locale),
-                'client_role'  => $this->getTranslation('client_role', $locale),
-                'cards'        => collect($cards)->map(fn($card) => [
-                    'image_url'   => $card['image_url'] ?? null,
-                    'description' => $card['description'] ?? null,
-                    'stars'       => (int)($card['stars'] ?? 0),
-                ])->values(),
+            $translations[$locale] = [
+                'title'    => $this->getTranslation('title', $locale),
+                'subtitle' => $this->getTranslation('subtitle', $locale),
             ];
         }
 
+        $cards = [];
+        if (!empty($this->clients)) {
+            foreach ($this->clients as $client) {
+                $clientData = [
+                    'image' => $client['image'] ?? null,
+                    'stars' => $client['stars'] ?? 5,
+                    'translations' => [],
+                ];
+
+                foreach ($locales as $locale) {
+                    $clientData['translations'][$locale] = [
+                        'client_name' => $client['client_name'][$locale] ?? null,
+                        'client_role' => $client['client_role'][$locale] ?? null,
+                        'review_text' => $client['review_text'][$locale] ?? null,
+                    ];
+                }
+
+                $cards[] = $clientData;
+            }
+        }
+
         return [
-            'id'         => $this->id,
-            'is_active'  => (bool) $this->is_active,
-            'translations' => $data,
+            'id'           => $this->id,
+            'translations' => $translations,
+            'cards'        => $cards,
+            'is_active'    => (bool) $this->is_active,
+            'created_at'   => $this->created_at,
+            'updated_at'   => $this->updated_at,
         ];
     }
 }

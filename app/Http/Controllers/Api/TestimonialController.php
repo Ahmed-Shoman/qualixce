@@ -1,31 +1,24 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TestimonialResource;
 use App\Models\Testimonial;
-use Illuminate\Http\Request;
 
 class TestimonialController extends Controller
 {
-    /**
-     * ✅ Get all active testimonials
-     */
-    public function index()
-    {
-        $testimonials = Testimonial::where('is_active', true)->get();
+public function index()
+{
+$testimonials = Testimonial::where('is_active', true)->latest()->get();
+return TestimonialResource::collection($testimonials);
+}
 
-        return TestimonialResource::collection($testimonials);
-    }
+public function show(Testimonial $testimonial)
+{
+if (! $testimonial->is_active) {
+return response()->json(['message' => 'Testimonial is inactive'], 404);
+}
 
-
-    public function show(Testimonial $testimonial)
-    {
-        if (! $testimonial->is_active) {
-            return response()->json(['message' => 'Testimonial is inactive'], 404);
-        }
-
-        return new TestimonialResource($testimonial);
-    }
+return new TestimonialResource($testimonial);
+}
 }
