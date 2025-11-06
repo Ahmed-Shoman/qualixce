@@ -28,33 +28,6 @@ class Article extends Model
         'subtitle',
         'content',
         'image_alt',
+        'slug'
     ];
-
-    /**
-     * Automatically generate a slug from the English title if not provided.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($article) {
-            if (empty($article->slug)) {
-                $article->slug = Str::slug($article->getTranslation('title', 'en'));
-            }
-        });
-
-        static::updating(function ($article) {
-            if (empty($article->slug)) {
-                $article->slug = Str::slug($article->getTranslation('title', 'en'));
-            }
-        });
-    }
-
-    /**
-     * Get full image URL.
-     */
-    public function getImageUrlAttribute(): ?string
-    {
-        return $this->image ? asset('storage/' . $this->image) : null;
-    }
 }

@@ -75,13 +75,6 @@ Route::apiResource('get-your-consultations', GetYourConsultationController::clas
 Route::apiResource('founder-messages', FounderMessageController::class);
 
 
-use App\Http\Controllers\Api\SettingController;
-
-Route::prefix('settings')->group(function () {
-    Route::get('/', [SettingController::class, 'index']);
-    Route::get('/{id}', [SettingController::class, 'show']);
-    Route::put('/{id}', [SettingController::class, 'update']); // optional
-});
 
 
 Route::apiResource('why-choose-us', WhyChooseUsController::class);
