@@ -14,6 +14,9 @@ class ArticleResource extends JsonResource
 
         foreach ($locales as $locale) {
             $translations[$locale] = [
+                'slug'        => $this->getTranslation('slug', $locale),
+                'writer'      => $this->getTranslation('writer', $locale),
+                'category'    => $this->getTranslation('category', $locale),
                 'title'       => $this->getTranslation('title', $locale),
                 'subtitle'    => $this->getTranslation('subtitle', $locale),
                 'content'     => $this->getTranslation('content', $locale),
@@ -22,15 +25,12 @@ class ArticleResource extends JsonResource
         }
 
         return [
-            'id'           => $this->id,
-            'slug'         => $this->slug,
-            'writer'       => $this->writer,
-            'category'     => $this->category,
-            'translations' => $translations,
-            'image'        => $this->image ? asset('storage/' . $this->image) : null,
-            'is_active'    => (bool) $this->is_active,
-            'created_at'   => $this->created_at?->format('Y-m-d H:i'),
-            'updated_at'   => $this->updated_at?->format('Y-m-d H:i'),
+            'id'          => $this->id,
+            'image'       => $this->image ? asset('storage/' . $this->image) : null,
+            'translations'=> $translations,
+            'is_active'   => (bool) $this->is_active,
+            'created_at'  => $this->created_at->format('Y-m-d H:i'),
+            'updated_at'  => $this->updated_at->format('Y-m-d H:i'),
         ];
     }
 }
