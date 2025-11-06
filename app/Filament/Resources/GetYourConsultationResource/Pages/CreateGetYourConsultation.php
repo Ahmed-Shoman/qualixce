@@ -33,19 +33,19 @@ class CreateGetYourConsultation extends CreateRecord
         }
 
         // 2️⃣ إرسال رسالة واتساب (باستخدام Twilio)
-        try {
-            $sid    = env('TWILIO_SID');
-            $token  = env('TWILIO_TOKEN');
-            $from   = 'whatsapp:' . env('TWILIO_WHATSAPP_FROM'); // رقم واتساب المرسل
-            $to     = 'whatsapp:+201234567890'; // رقمك لاستقبال الرسالة
+        // try {
+        //     $sid    = env('TWILIO_SID');
+        //     $token  = env('TWILIO_TOKEN');
+        //     $from   = 'whatsapp:' . env('TWILIO_WHATSAPP_FROM'); // رقم واتساب المرسل
+        //     $to     = 'whatsapp:+201234567890'; // رقمك لاستقبال الرسالة
 
-            $twilio = new Client($sid, $token);
-            $twilio->messages->create($to, [
-                'from' => $from,
-                'body' => "📩 New Consultation Request\nName: {$record->name}\nPhone: {$record->mobile_phone}\nEmail: {$record->email}\nMessage: {$record->message}",
-            ]);
-        } catch (\Exception $e) {
-            info('WhatsApp send failed: ' . $e->getMessage());
-        }
+        //     $twilio = new Client($sid, $token);
+        //     $twilio->messages->create($to, [
+        //         'from' => $from,
+        //         'body' => "📩 New Consultation Request\nName: {$record->name}\nPhone: {$record->mobile_phone}\nEmail: {$record->email}\nMessage: {$record->message}",
+        //     ]);
+        // } catch (\Exception $e) {
+        //     info('WhatsApp send failed: ' . $e->getMessage());
+        // }
     }
 }

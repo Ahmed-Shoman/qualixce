@@ -8,19 +8,23 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ConsultationMail;
 
 class GetYourConsultationResource extends Resource
 {
     protected static ?string $model = GetYourConsultation::class;
-
     protected static ?string $navigationIcon  = 'heroicon-o-chat-bubble-left-ellipsis';
     protected static ?string $navigationLabel = 'Consultation Requests';
     protected static ?string $pluralLabel     = 'Consultation Requests';
@@ -32,24 +36,6 @@ class GetYourConsultationResource extends Resource
         return __('طلبات الموقع');
     }
 
-    public static function getNavigationLabel(): string
-    {
-        return __('Consultation Requests');
-    }
-
-    public static function getPluralLabel(): ?string
-    {
-        return __('Consultation Requests');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('Consultation Request');
-    }
-
-    /**
-     * ---------- Form ----------
-     */
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -81,9 +67,6 @@ class GetYourConsultationResource extends Resource
         ]);
     }
 
-    /**
-     * ---------- Table ----------
-     */
     public static function table(Table $table): Table
     {
         return $table
@@ -115,6 +98,10 @@ class GetYourConsultationResource extends Resource
                     ->label(__('Requested At'))
                     ->dateTime('d M Y - H:i')
                     ->color('info'),
+
+                IconColumn::make('is_active')
+                    ->label(__('Visible'))
+                    ->boolean(),
             ])
             ->filters([
                 Filter::make('recent')
@@ -127,7 +114,7 @@ class GetYourConsultationResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
-                    ->label(__('عرض'))
+                    ->label(__('View'))
                     ->modalHeading(fn (?GetYourConsultation $record) =>
                         $record ? "Consultation — {$record->name}" : "Consultation Details"
                     )
@@ -136,18 +123,48 @@ class GetYourConsultationResource extends Resource
                         $record ? view('filament.consultations.view', ['record' => $record]) : null
                     ),
 
-                DeleteAction::make()->label(__('حذف'))->requiresConfirmation(),
+                DeleteAction::make()->label(__('Delete'))->requiresConfirmation(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make()->label(__('حذف المحدد')),
-            ])
-            ->defaultSort('created_at', 'desc')
-            ->striped();
+                // Bulk delete
+                DeleteBulkAction::make()->label(__('Delete Selected')),
+
+                // Bulk send email
+              BulkAction::make('send_email')
+    ->label('Send Email')
+    ->form([
+        // إضافة حقل subject (الموضوع)
+        TextInput::make('subject')
+            ->label('Subject')
+            ->required()
+            ->maxLength(255)
+            ->placeholder('Enter the subject of the email'),
+
+        Textarea::make('email_content')
+            ->label('Email Message')
+            ->required()
+            ->placeholder('Enter the content of the email')
+    ])
+    ->action(function (array $data, $records) {
+        foreach ($records as $record) {
+            Mail::to($record->email)
+                ->send(new ConsultationMail($record, $data['subject'], $data['email_content']));
+        }
+    })
+    ->deselectRecordsAfterCompletion()
+    ->requiresConfirmation()
+    ->modalHeading('Send Email to Selected Users')
+    ->modalButton('Send')
+    ->requiresConfirmation()
+    ->deselectRecordsAfterCompletion(),
+
+        ])
+        ->defaultSort('created_at', 'desc')
+        ->striped()
+            ->selectable();
+
     }
 
-    /**
-     * ---------- Pages ----------
-     */
     public static function getPages(): array
     {
         return [

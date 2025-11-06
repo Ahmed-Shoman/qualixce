@@ -1,27 +1,30 @@
 <?php
-
 namespace App\Mail;
 
+use App\Models\GetYourConsultation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\GetYourConsultation;
 
 class ConsultationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $record;
+    public $consultation;
+    public $content;
 
-    public function __construct(GetYourConsultation $record)
+    public function __construct(GetYourConsultation $consultation, string $content)
     {
-        $this->record = $record;
+        $this->consultation = $consultation;
+        $this->content = $content;
     }
 
     public function build()
     {
-        return $this->subject('طلب استشارة جديد')
-            ->view('emails.consultation')
-            ->with(['record' => $this->record]);
+        return $this->view('emails.consultation')
+                    ->with([
+                        'consultation' => $this->consultation,
+                        'content' => $this->content,
+                    ]);
     }
 }
