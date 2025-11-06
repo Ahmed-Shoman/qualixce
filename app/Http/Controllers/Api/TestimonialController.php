@@ -9,13 +9,23 @@ use Illuminate\Http\Request;
 
 class TestimonialController extends Controller
 {
+    /**
+     * ✅ Get all active testimonials
+     */
     public function index()
     {
-        return TestimonialResource::collection(Testimonial::all());
+        $testimonials = Testimonial::where('is_active', true)->get();
+
+        return TestimonialResource::collection($testimonials);
     }
+
 
     public function show(Testimonial $testimonial)
     {
+        if (! $testimonial->is_active) {
+            return response()->json(['message' => 'Testimonial is inactive'], 404);
+        }
+
         return new TestimonialResource($testimonial);
     }
 }

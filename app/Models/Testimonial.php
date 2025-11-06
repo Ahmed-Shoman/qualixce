@@ -10,11 +10,27 @@ class Testimonial extends Model
 {
     use HasFactory, HasTranslations;
 
-    protected $fillable = ['title', 'subtitle', 'cards'];
 
-    public $translatable = ['title', 'subtitle'];
+    protected $fillable = [
+        'title',
+        'subtitle',
+        'client_name',
+        'client_role',
+        'cards',
+        'is_active',
+    ];
+
+
+    public $translatable = [
+        'title',
+        'subtitle',
+        'client_name',
+        'client_role',
+    ];
+
 
     protected $casts = [
         'cards' => 'array',
+        'is_active' => 'boolean',
     ];
 }

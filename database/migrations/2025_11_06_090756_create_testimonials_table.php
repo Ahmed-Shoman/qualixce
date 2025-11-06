@@ -12,7 +12,12 @@ return new class extends Migration
             $table->id();
             $table->json('title');
             $table->json('subtitle')->nullable();
-            $table->json('cards')->nullable(); // each card => { image, description, stars }
+            $table->json('client_name')->nullable();
+            $table->json('client_role')->nullable();
+            $table->json('cards')->nullable();
+
+            $table->boolean('is_active')->default(true)->comment('1 = Active, 0 = Hidden');
+
             $table->timestamps();
         });
     }
