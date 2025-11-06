@@ -18,16 +18,19 @@ class ArticleResource extends JsonResource
                 'subtitle'    => $this->getTranslation('subtitle', $locale),
                 'content'     => $this->getTranslation('content', $locale),
                 'image_alt'   => $this->getTranslation('image_alt', $locale),
-                'image'       => $this->image ? asset('storage/' . $this->image) : null,
             ];
         }
 
         return [
-            'id'          => $this->id,
-            'translations'=> $translations,
-            'is_active'   => (bool) $this->is_active,
-            'created_at'  => $this->created_at,
-            'updated_at'  => $this->updated_at,
+            'id'           => $this->id,
+            'slug'         => $this->slug,
+            'writer'       => $this->writer,
+            'category'     => $this->category,
+            'translations' => $translations,
+            'image'        => $this->image ? asset('storage/' . $this->image) : null,
+            'is_active'    => (bool) $this->is_active,
+            'created_at'   => $this->created_at?->format('Y-m-d H:i'),
+            'updated_at'   => $this->updated_at?->format('Y-m-d H:i'),
         ];
     }
 }

@@ -38,16 +38,32 @@ class ArticleResource extends Resource
                     Tabs::make('Translations')
                         ->tabs([
                             Tabs\Tab::make('English')->schema([
-                                TextInput::make('title.en')->label('Title (EN)')->required(),
-                                TextInput::make('subtitle.en')->label('Subtitle (EN)'),
-                                Textarea::make('content.en')->label('Content (EN)')->rows(5),
-                                TextInput::make('image_alt.en')->label('Image Alt (EN)'),
+                                TextInput::make('title.en')
+                                    ->label('Title (EN)')
+                                    ->required(),
+                                TextInput::make('subtitle.en')
+                                    ->label('Subtitle (EN)'),
+                                Textarea::make('content.en')
+                                    ->label('Content (EN)')
+                                    ->rows(5),
+                                TextInput::make('image_alt.en')
+                                    ->label('Image Alt (EN)'),
                             ]),
                             Tabs\Tab::make('Arabic')->schema([
-                                TextInput::make('title.ar')->label('Title (AR)')->required()->extraAttributes(['dir' => 'rtl']),
-                                TextInput::make('subtitle.ar')->label('Subtitle (AR)')->extraAttributes(['dir' => 'rtl']),
-                                Textarea::make('content.ar')->label('Content (AR)')->rows(5)->extraAttributes(['dir' => 'rtl']),
-                                TextInput::make('image_alt.ar')->label('Image Alt (AR)')->extraAttributes(['dir' => 'rtl']),
+                                TextInput::make('title.ar')
+                                    ->label('Title (AR)')
+                                    ->required()
+                                    ->extraAttributes(['dir' => 'rtl']),
+                                TextInput::make('subtitle.ar')
+                                    ->label('Subtitle (AR)')
+                                    ->extraAttributes(['dir' => 'rtl']),
+                                Textarea::make('content.ar')
+                                    ->label('Content (AR)')
+                                    ->rows(5)
+                                    ->extraAttributes(['dir' => 'rtl']),
+                                TextInput::make('image_alt.ar')
+                                    ->label('Image Alt (AR)')
+                                    ->extraAttributes(['dir' => 'rtl']),
                             ]),
                         ]),
 
@@ -57,6 +73,22 @@ class ArticleResource extends Resource
                         ->image()
                         ->imageEditor()
                         ->maxSize(2048),
+
+                    TextInput::make('writer')
+                        ->label(__('Writer'))
+                        ->placeholder('Enter the author name')
+                        ->required(),
+
+                    TextInput::make('category')
+                        ->label(__('Category'))
+                        ->placeholder('Enter article category')
+                        ->required(),
+
+                    TextInput::make('slug')
+                        ->label(__('Slug'))
+                        ->placeholder('auto-generated or custom')
+                        ->unique(ignoreRecord: true)
+                        ->helperText('Used in the article URL, must be unique.'),
 
                     Toggle::make('is_active')
                         ->label(__('Visible on website'))
@@ -75,6 +107,23 @@ class ArticleResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('writer')
+                    ->label('Writer')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('category')
+                    ->label('Category')
+                    ->sortable()
+                    ->badge()
+                    ->color('primary'),
+
+                TextColumn::make('slug')
+                    ->label('Slug')
+                    ->copyable()
+                    ->copyMessage('Slug copied!')
+                    ->limit(30),
+
                 IconColumn::make('is_active')
                     ->label('Visible')
                     ->boolean()
@@ -88,7 +137,7 @@ class ArticleResource extends Resource
                     ->label('View on Website')
                     ->icon('heroicon-o-globe-alt')
                     ->color('info')
-                    ->url(fn($record) => route('article.show', $record->id))
+                    ->url(fn($record) => route('article.show', $record->slug))
                     ->openUrlInNewTab(),
             ])
             ->defaultSort('created_at', 'desc')

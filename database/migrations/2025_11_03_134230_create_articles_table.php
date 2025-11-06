@@ -8,17 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-       Schema::create('articles', function (Blueprint $table) {
-    $table->id();
-    $table->json('title');
-    $table->json('subtitle')->nullable();
-    $table->json('content')->nullable();
-    $table->string('image')->nullable();
-    $table->json('image_alt')->nullable();
-    $table->boolean('is_active')->default(true);
-    $table->timestamps();
-});
-}
+        Schema::create('articles', function (Blueprint $table) {
+            $table->id();
+            $table->json('title');
+            $table->json('subtitle')->nullable();
+            $table->json('content')->nullable();
+            $table->string('image')->nullable();
+            $table->json('image_alt')->nullable();
+            $table->boolean('is_active')->default(true);
+
+
+            $table->string('writer')->nullable();
+            $table->string('category')->nullable();
+            $table->string('slug')->unique();
+
+            $table->timestamps();
+        });
+    }
 
     public function down(): void
     {
