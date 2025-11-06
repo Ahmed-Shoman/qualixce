@@ -14,10 +14,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\Action;
 
 class ArticleResource extends Resource
 {
@@ -47,12 +50,17 @@ class ArticleResource extends Resource
                                 TextInput::make('image_alt.ar')->label('Image Alt (AR)')->extraAttributes(['dir' => 'rtl']),
                             ]),
                         ]),
+
                     FileUpload::make('image')
                         ->label(__('Article Image'))
                         ->directory('articles')
                         ->image()
                         ->imageEditor()
                         ->maxSize(2048),
+
+                    Toggle::make('is_active')
+                        ->label(__('Visible on website'))
+                        ->default(true),
                 ]),
         ]);
     }
@@ -67,15 +75,21 @@ class ArticleResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('title')
-                    ->label('Title (AR)')
-                    ->formatStateUsing(fn($record) => $record->getTranslation('title', 'ar'))
-                    ->color('gray'),
+                IconColumn::make('is_active')
+                    ->label('Visible')
+                    ->boolean()
+                    ->sortable(),
             ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+                Action::make('preview')
+                    ->label('View on Website')
+                    ->icon('heroicon-o-globe-alt')
+                    ->color('info')
+                    ->url(fn($record) => route('article.show', $record->id))
+                    ->openUrlInNewTab(),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped();

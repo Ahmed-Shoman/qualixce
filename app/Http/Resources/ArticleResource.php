@@ -10,10 +10,10 @@ class ArticleResource extends JsonResource
     public function toArray(Request $request): array
     {
         $locales = config('app.locales', ['ar', 'en']);
-        $data = [];
+        $translations = [];
 
         foreach ($locales as $locale) {
-            $data[$locale] = [
+            $translations[$locale] = [
                 'title'       => $this->getTranslation('title', $locale),
                 'subtitle'    => $this->getTranslation('subtitle', $locale),
                 'content'     => $this->getTranslation('content', $locale),
@@ -22,10 +22,12 @@ class ArticleResource extends JsonResource
             ];
         }
 
-        $data['id'] = $this->id;
-        $data['created_at'] = $this->created_at;
-        $data['updated_at'] = $this->updated_at;
-
-        return $data;
+        return [
+            'id'          => $this->id,
+            'translations'=> $translations,
+            'is_active'   => (bool) $this->is_active,
+            'created_at'  => $this->created_at,
+            'updated_at'  => $this->updated_at,
+        ];
     }
 }

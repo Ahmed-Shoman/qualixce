@@ -16,6 +16,7 @@ class Article extends Model
         'content',
         'image',
         'image_alt',
+        'is_active'
     ];
 
     public $translatable = [

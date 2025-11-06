@@ -11,11 +11,19 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        return ArticleResource::collection(Article::latest()->get());
+        // Return only active articles for the frontend
+        $articles = Article::where('is_active', true)->latest()->get();
+
+        return ArticleResource::collection($articles);
     }
 
     public function show(Article $article)
     {
+        // Allow showing inactive only if needed (for preview maybe)
+        if (!$article->is_active) {
+            return response()->json(['message' => 'Article not active'], 403);
+        }
+
         return new ArticleResource($article);
     }
 
@@ -26,7 +34,8 @@ class ArticleController extends Controller
             'subtitle' => 'nullable|array',
             'content' => 'nullable|array',
             'image_alt' => 'nullable|array',
-            'image' => 'nullable|image',
+            'image' => 'nullable|file|image|max:2048',
+            'is_active' => 'boolean',
         ]);
 
         if ($request->hasFile('image')) {
@@ -45,7 +54,8 @@ class ArticleController extends Controller
             'subtitle' => 'nullable|array',
             'content' => 'nullable|array',
             'image_alt' => 'nullable|array',
-            'image' => 'nullable|image',
+            'image' => 'nullable|file|image|max:2048',
+            'is_active' => 'boolean',
         ]);
 
         if ($request->hasFile('image')) {
@@ -60,6 +70,7 @@ class ArticleController extends Controller
     public function destroy(Article $article)
     {
         $article->delete();
-        return response()->noContent();
+
+        return response()->json(['message' => 'Article deleted successfully']);
     }
 }
