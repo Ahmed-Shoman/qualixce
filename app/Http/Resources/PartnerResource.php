@@ -13,25 +13,26 @@ class PartnerResource extends JsonResource
         $data = [];
 
         foreach ($locales as $locale) {
+
             $images = collect($this->images ?? [])
                 ->map(fn($img) => [
-                    'url' => isset($img['image'])
+                    'image' => isset($img['image'])
                         ? asset('storage/' . $img['image'])
                         : null,
+                    'url' => $img['url'] ?? null,
                 ])
-                ->filter(fn($img) => $img['url'] !== null)
+                ->filter(fn($img) => $img['image'] !== null)
                 ->values();
 
             $data[$locale] = [
-                'title' => $this->getTranslation('title', $locale),
+                'title'    => $this->getTranslation('title', $locale),
                 'subtitle' => $this->getTranslation('subtitle', $locale),
-                'images' => $images,
+                'images'   => $images,
             ];
         }
 
-
-        $data['id'] = $this->id;
-        $data['is_active'] = (bool) $this->is_active;
+        $data['id']         = $this->id;
+        $data['is_active']  = (bool) $this->is_active;
         $data['created_at'] = $this->created_at?->toDateTimeString();
         $data['updated_at'] = $this->updated_at?->toDateTimeString();
 
