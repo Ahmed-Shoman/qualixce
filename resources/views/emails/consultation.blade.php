@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $subject ?? 'رد على طلب الاستشارة' }}</title>
 </head>
+
 <body style="margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; background-color: #f4f4f4; line-height: 1.6; color: #333333; direction: ltr; text-align: left;"> <!-- LTR للـ layout عشان ميعكسش -->
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f4f4;">
         <tr>
@@ -56,7 +58,7 @@
                     <!-- Footer -->
                     <tr>
                         <td style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #dee2e6; border-radius: 0 0 10px 10px;">
-                            <p style="direction: rtl;">شكراً لثقتك بـ Qualixce! | <a href="https://your-site.com" style="color: #007bff;">زور موقعنا</a></p>
+                            <p style="direction: rtl;">شكراً لثقتك بـ Qualixce! | <a href="https://qualiexce.com/" style="color: #007bff;">زور موقعنا</a></p>
                         </td>
                     </tr>
                 </table>
@@ -64,4 +66,5 @@
         </tr>
     </table>
 </body>
+
 </html>
