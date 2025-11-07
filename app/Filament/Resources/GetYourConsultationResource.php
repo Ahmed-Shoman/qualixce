@@ -19,17 +19,23 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ConsultationMail;
 
 class GetYourConsultationResource extends Resource
 {
     protected static ?string $model = GetYourConsultation::class;
-    protected static ?string $navigationIcon  = 'heroicon-o-chat-bubble-left-ellipsis';
+
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
+
     protected static ?string $navigationLabel = 'Consultation Requests';
-    protected static ?string $pluralLabel     = 'Consultation Requests';
-    protected static ?string $modelLabel      = 'Consultation Request';
-    protected static ?int $navigationSort     = 2;
+
+    protected static ?string $pluralLabel = 'Consultation Requests';
+
+    protected static ?string $modelLabel = 'Consultation Request';
+
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string
     {
@@ -38,33 +44,31 @@ class GetYourConsultationResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form->schema([
-            Section::make(__('Consultation Request Info'))
-                ->description(__('الرجاء إدخال بيانات الاستشارة المطلوبة'))
-                ->schema([
-                    TextInput::make('name')
-                        ->label(__('Name'))
-                        ->required()
-                        ->maxLength(100),
-
-                    TextInput::make('mobile_phone')
-                        ->label(__('Mobile Phone'))
-                        ->required()
-                        ->maxLength(20),
-
-                    TextInput::make('email')
-                        ->label(__('Email'))
-                        ->email()
-                        ->required()
-                        ->maxLength(150),
-
-                    Textarea::make('message')
-                        ->label(__('Message'))
-                        ->rows(6)
-                        ->required(),
-                ])
-                ->columns(1),
-        ]);
+        return $form
+            ->schema([
+                Section::make(__('Consultation Request Info'))
+                    ->description(__('الرجاء إدخال بيانات الاستشارة المطلوبة'))
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(__('Name'))
+                            ->required()
+                            ->maxLength(100),
+                        TextInput::make('mobile_phone')
+                            ->label(__('Mobile Phone'))
+                            ->required()
+                            ->maxLength(20),
+                        TextInput::make('email')
+                            ->label(__('Email'))
+                            ->email()
+                            ->required()
+                            ->maxLength(150),
+                        Textarea::make('message')
+                            ->label(__('Message'))
+                            ->rows(6)
+                            ->required(),
+                    ])
+                    ->columns(1),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -76,29 +80,24 @@ class GetYourConsultationResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->copyable(),
-
                 TextColumn::make('mobile_phone')
                     ->label(__('Mobile Phone'))
                     ->searchable()
                     ->copyable()
                     ->url(fn ($record) => "tel:{$record->mobile_phone}", true),
-
                 TextColumn::make('email')
                     ->label(__('Email'))
                     ->searchable()
                     ->copyable()
                     ->url(fn ($record) => "mailto:{$record->email}", true),
-
                 TextColumn::make('message')
                     ->label(__('Message'))
                     ->limit(40)
                     ->tooltip(fn (?GetYourConsultation $record) => $record?->message ?? ''),
-
                 BadgeColumn::make('created_at')
                     ->label(__('Requested At'))
                     ->dateTime('d M Y - H:i')
                     ->color('info'),
-
                 IconColumn::make('is_active')
                     ->label(__('Visible'))
                     ->boolean(),
@@ -107,7 +106,6 @@ class GetYourConsultationResource extends Resource
                 Filter::make('recent')
                     ->label(__('Recent Requests'))
                     ->query(fn ($query) => $query->latest()),
-
                 Filter::make('email_gmail')
                     ->label(__('Gmail Only'))
                     ->query(fn ($query) => $query->where('email', 'like', '%@gmail.com')),
@@ -122,52 +120,51 @@ class GetYourConsultationResource extends Resource
                     ->modalContent(fn (?GetYourConsultation $record) =>
                         $record ? view('filament.consultations.view', ['record' => $record]) : null
                     ),
-
                 DeleteAction::make()->label(__('Delete'))->requiresConfirmation(),
             ])
             ->bulkActions([
                 DeleteBulkAction::make()->label(__('Delete Selected')),
+                BulkAction::make('send_email')
+                    ->label('Send Email')
+                    ->form([
+                        TextInput::make('subject')
+                            ->label('Subject')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Enter the subject of the email'),
+                        Textarea::make('email_content')
+                            ->label('Email Message')
+                            ->required()
+                            ->placeholder('Enter the content of the email')
+                    ])
+                    ->action(function (array $data, $records) {
+                        foreach ($records as $record) {
+                            Mail::to($record->email)
+                                ->send(new ConsultationMail($record, $data['email_content'], $data['subject']));
+                        }
 
-              BulkAction::make('send_email')
-    ->label('Send Email')
-    ->form([
-        TextInput::make('subject')
-            ->label('Subject')
-            ->required()
-            ->maxLength(255)
-            ->placeholder('Enter the subject of the email'),
-
-        Textarea::make('email_content')
-            ->label('Email Message')
-            ->required()
-            ->placeholder('Enter the content of the email')
-    ])
-    ->action(function (array $data, $records) {
-        foreach ($records as $record) {
-            Mail::to($record->email)
-                ->send(new ConsultationMail($record, $data['subject'], $data['email_content']));
-        }
-    })
-    ->deselectRecordsAfterCompletion()
-    ->requiresConfirmation()
-    ->modalHeading('Send Email to Selected Users')
-    ->modalButton('Send')
-    ->requiresConfirmation()
-    ->deselectRecordsAfterCompletion(),
-
-        ])
-        ->defaultSort('created_at', 'desc')
-        ->striped()
+                        Notification::make()
+                            ->title(__('تم إرسال الإيميلات!'))
+                            ->body(__('تم إرسال الإيميلات إلى {count} مستلم.', ['count' => count($records)]))
+                            ->success()
+                            ->send();
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->requiresConfirmation()
+                    ->modalHeading('Send Email to Selected Users')
+                    ->modalSubmitActionLabel('Send'),
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->striped()
             ->selectable();
-
     }
 
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListGetYourConsultations::route('/'),
+            'index' => Pages\ListGetYourConsultations::route('/'),
             'create' => Pages\CreateGetYourConsultation::route('/create'),
-            'edit'   => Pages\EditGetYourConsultation::route('/{record}/edit'),
+            'edit' => Pages\EditGetYourConsultation::route('/{record}/edit'),
         ];
     }
 }
