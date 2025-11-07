@@ -126,14 +126,11 @@ class GetYourConsultationResource extends Resource
                 DeleteAction::make()->label(__('Delete'))->requiresConfirmation(),
             ])
             ->bulkActions([
-                // Bulk delete
                 DeleteBulkAction::make()->label(__('Delete Selected')),
 
-                // Bulk send email
               BulkAction::make('send_email')
     ->label('Send Email')
     ->form([
-        // إضافة حقل subject (الموضوع)
         TextInput::make('subject')
             ->label('Subject')
             ->required()
