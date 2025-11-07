@@ -99,9 +99,6 @@ class GetYourConsultationResource extends Resource
                     ->dateTime('d M Y - H:i')
                     ->color('info'),
 
-                IconColumn::make('is_active')
-                    ->label(__('Visible'))
-                    ->boolean(),
             ])
             ->filters([
                 Filter::make('recent')
