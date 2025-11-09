@@ -16,7 +16,7 @@
                     <tr>
                         <td style="background-color: #007bff; padding: 30px; text-align: center; color: #ffffff; border-radius: 10px 10px 0 0;">
                             <h1 style="margin: 0; font-size: 24px;">{{ $subject ?? 'رد على استشارتك' }}</h1>
-                            <p style="margin: 10px 0 0 0; font-size: 14px; direction: rtl;">Qualixce</p> <!-- RTL للنص العربي فقط -->
+                            <p style="margin: 10px 0 0 0; font-size: 14px; direction: rtl;">Qualiexce</p> <!-- RTL للنص العربي فقط -->
                         </td>
                     </tr>
                     <!-- Body - المحتوى تحت -->
@@ -46,19 +46,19 @@
                             </table>
 
                             <!-- Button -->
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 20px 0;">
+                            <!-- <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 20px 0;">
                                 <tr>
                                     <td align="center">
                                         <a href="mailto:{{ $record->email ?? '' }}?subject=رد على ردك&body=شكراً لردك،..." style="background-color: #28a745; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">رد سريع</a>
                                     </td>
                                 </tr>
-                            </table>
+                            </table> -->
                         </td>
                     </tr>
                     <!-- Footer -->
                     <tr>
                         <td style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #dee2e6; border-radius: 0 0 10px 10px;">
-                            <p style="direction: rtl;">شكراً لثقتك بـ Qualixce! | <a href="https://qualiexce.com/" style="color: #007bff;">زور موقعنا</a></p>
+                            <p style="direction: rtl;">شكراً لثقتك بـ Qualiexce! | <a href="https://qualiexce.com/" style="color: #007bff;">زور موقعنا</a></p>
                         </td>
                     </tr>
                 </table>

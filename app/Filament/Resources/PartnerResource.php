@@ -72,7 +72,6 @@ class PartnerResource extends Resource
                             TextInput::make('url')
                                 ->label(__('URL'))
                                 ->url()
-                                ->required()
                                 ->placeholder('https://example.com'),
                         ])
                         ->columns(1)
