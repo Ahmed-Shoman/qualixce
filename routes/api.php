@@ -4,7 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HeroSectionController;
 use App\Http\Controllers\Api\AboutQualixceSectionController;
-use App\Http\Controllers\Api\FounderMessageController;   // ✅ الصح
+use App\Http\Controllers\Api\FounderMessageController;
+use App\Http\Controllers\Api\UserRegistrationController;
+use App\Http\Controllers\Api\ChatSyncController;
+use App\Http\Controllers\Api\ChatController;
+
 
 
 
@@ -103,3 +107,11 @@ Route::get('testimonials/{testimonial}', [TestimonialController::class, 'show'])
 Route::post('testimonials', [TestimonialController::class, 'store']);
 Route::put('testimonials/{testimonial}', [TestimonialController::class, 'update']);
 Route::delete('testimonials/{testimonial}', [TestimonialController::class, 'destroy']);
+
+
+
+Route::post('/user-registration', [UserRegistrationController::class, 'store']);
+Route::post('/chat-sync', [ChatSyncController::class, 'sync']);
+
+
+Route::post('/chat/send', [ChatController::class, 'send']);
