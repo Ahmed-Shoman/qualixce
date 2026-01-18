@@ -15,7 +15,6 @@ class UserRegistrationController extends Controller
             'phone' => 'required|string|max:20',
         ]);
 
-        // حاول نمنع تكرار نفس المستخدم
         $user = User::firstOrCreate(
             ['phone' => $data['phone']],
             ['name' => $data['name']]
