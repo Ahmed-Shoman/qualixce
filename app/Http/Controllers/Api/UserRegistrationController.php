@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\ChatUser;
+
 
 class UserRegistrationController extends Controller
 {
@@ -15,7 +17,7 @@ class UserRegistrationController extends Controller
             'phone' => 'required|string|max:20',
         ]);
 
-        $user = User::firstOrCreate(
+        $user = ChatUser::firstOrCreate(
             ['phone' => $data['phone']],
             ['name' => $data['name']]
         );

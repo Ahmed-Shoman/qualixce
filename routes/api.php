@@ -110,6 +110,7 @@ Route::delete('testimonials/{testimonial}', [TestimonialController::class, 'dest
 
 
 
+
 Route::post('/user-registration', [UserRegistrationController::class, 'store']);
 Route::post('/chat-sync', [ChatSyncController::class, 'sync']);
 

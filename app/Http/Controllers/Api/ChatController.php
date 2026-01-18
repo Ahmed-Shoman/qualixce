@@ -12,15 +12,15 @@ class ChatController extends Controller
     public function send(Request $request)
     {
         $data = $request->validate([
-            'user_id'    => 'required|exists:users,id',
-            'session_id' => 'required|integer',
-            'message'    => 'required|string|max:5000',
+            'chat_user_id' => 'required|exists:chat_users,id',
+            'session_id'   => 'required|integer',
+            'message'      => 'required|string|max:5000',
         ]);
 
         $session = ChatSession::firstOrCreate(
             [
-                'user_id'    => $data['user_id'],
-                'session_id' => $data['session_id'],
+                'chat_user_id' => $data['chat_user_id'],
+                'session_id'   => $data['session_id'],
             ]
         );
 
@@ -47,7 +47,6 @@ class ChatController extends Controller
 
     protected function generateReply(string $message): string
     {
-        // مؤقتًا: Rules بسيطة
         if (str_contains($message, 'سعر')) {
             return 'الأسعار بتبدأ من 18,000 جنيه. تحب أعرفك التفاصيل؟';
         }

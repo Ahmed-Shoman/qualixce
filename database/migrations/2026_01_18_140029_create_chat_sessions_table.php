@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('chat_sessions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('chat_user_id')->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('session_id');
             $table->timestamp('last_active_at')->nullable();
             $table->timestamps();
-            $table->unique(['user_id', 'session_id']);
+            $table->unique(['chat_user_id', 'session_id']);
+
 });
 
 

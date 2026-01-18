@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ChatSession extends Model
 {
     protected $fillable = [
-        'user_id',
+        'chat_user_id',
         'session_id',
         'last_active_at'
     ];
