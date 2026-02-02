@@ -11,8 +11,8 @@ class ChatUser extends Model
         'phone',
     ];
 
-    public function chatSessions()
+    public function chatUser()
     {
-        return $this->hasMany(ChatSession::class);
+        return $this->belongsTo(ChatUser::class);
     }
 }

@@ -107,12 +107,9 @@ Route::get('testimonials/{testimonial}', [TestimonialController::class, 'show'])
 Route::post('testimonials', [TestimonialController::class, 'store']);
 Route::put('testimonials/{testimonial}', [TestimonialController::class, 'update']);
 Route::delete('testimonials/{testimonial}', [TestimonialController::class, 'destroy']);
-
-
-
-
 Route::post('/user-registration', [UserRegistrationController::class, 'store']);
-Route::post('/chat-sync', [ChatSyncController::class, 'sync']);
 
+use App\Http\Controllers\Api\ChatBotMessagesController;
 
-Route::post('/chat/send', [ChatController::class, 'send']);
+Route::post('/chat', [ChatBotMessagesController::class, 'store']);
+Route::get('/chat', [ChatBotMessagesController::class, 'index']);
